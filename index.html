@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Celtech College Olongapo - Text-to-Speech App - Listen to school announcements, events, schedules, and learn about our history and facilities">
+    <title>V.I.R.A. - CeltechVoice | Celtech College Olongapo</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Mobile Optimization -->
+    <meta name="theme-color" content="#1e5a8e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CeltechVoice">
+    <link rel="apple-touch-icon" href="celtech_logo.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <img src="celtech_logo.png" alt="Celtech College Logo"
+                            style="width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-md);">
+                    </div>
+                    <h1 class="logo-text">V.I.R.A. <span class="accent">CeltechVoice</span></h1>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                        <path
+                            d="M12 1V3M12 21V23M23 12H21M3 12H1M20.49 20.49L19.07 19.07M4.93 4.93L3.51 3.51M20.49 3.51L19.07 4.93M4.93 19.07L3.51 20.49"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Voice Search Bar -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Search events, history, facilities, campus guide...">
+                    <button class="voice-search-btn" id="voiceSearchBtn" aria-label="Voice search">
+                        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                stroke="currentColor" stroke-width="2" />
+                            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="mic-active-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
+                            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                fill="currentColor" />
+                            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="voice-feedback" id="voiceFeedback">
+                    <span class="listening-text">Listening...</span>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="tab-btn active" data-category="events">
+                    <span class="tab-icon">📅</span>
+                    <span class="tab-label">Events</span>
+                </button>
+                <button class="tab-btn" data-category="history">
+                    <span class="tab-icon">🏛️</span>
+                    <span class="tab-label">History</span>
+                </button>
+                <button class="tab-btn" data-category="facilities">
+                    <span class="tab-icon">🏢</span>
+                    <span class="tab-label">Facilities</span>
+                </button>
+                <button class="tab-btn" data-category="campus_guide">
+                    <span class="tab-icon">🗺️</span>
+                    <span class="tab-label">Campus Guide</span>
+                </button>
+                <a href="navigation.html" class="tab-btn external-link"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                    <span class="tab-icon">🧭</span>
+                    <span class="tab-label">Interactive Maps</span>
+                </a>
+            </div>
+
+            <!-- Content Cards -->
+            <div class="content-section" id="contentSection">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+
+            <!-- TTS Control Panel -->
+            <div class="tts-panel" id="ttsPanel">
+                <div class="tts-content">
+                    <div class="tts-header">
+                        <h3 class="tts-title" id="ttsTitle">Select an item to listen</h3>
+                        <button class="close-btn" id="closeBtn" aria-label="Close">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="tts-text" id="ttsText">
+                        <p>Welcome to V.I.R.A. (Virtual Interactive Resource Assistant)! Select any announcement, event,
+                            or schedule to have it read aloud to you.</p>
+                    </div>
+
+                    <div class="tts-controls">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+
+                        <div class="control-buttons">
+                            <button class="control-btn" id="playBtn" aria-label="Play">
+                                <svg class="play-icon" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
+                                </svg>
+                                <svg class="pause-icon" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="4" width="4" height="16" fill="currentColor" />
+                                    <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+                                </svg>
+                            </button>
+                            <button class="control-btn" id="stopBtn" aria-label="Stop">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="6" width="12" height="12" fill="currentColor" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="speed-control">
+                            <label for="speedSlider" class="speed-label">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                Speed: <span id="speedValue">1.0</span>x
+                            </label>
+                            <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1"
+                                class="speed-slider">
+                        </div>
+
+                        <div class="voice-select">
+                            <label for="voiceSelector" class="voice-label">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" />
+                                </svg>
+                                Voice
+                            </label>
+                            <select id="voiceSelector" class="voice-dropdown"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Voice Assistant Floating Action Button -->
+        <button class="fab voice-assistant-fab" id="fabBtn" aria-label="V.I.R.A. Voice Assistant"
+            title="V.I.R.A. Voice Assistant">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                    stroke="currentColor" stroke-width="2" />
+                <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" />
+                <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span class="fab-label">V.I.R.A.</span>
+        </button>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

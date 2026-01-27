@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Celtech College Olongapo - Interactive Campus Navigation and Floor Maps">
+    <title>V.I.R.A. - Campus Navigation | Celtech College Olongapo</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Mobile Optimization -->
+    <meta name="theme-color" content="#1e5a8e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Celtech Navigation">
+    <link rel="apple-touch-icon" href="celtech_logo.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Background Gradient for Navigation Page */
+        body {
+            background: linear-gradient(135deg,
+                    hsl(210, 50%, 95%) 0%,
+                    hsl(210, 40%, 98%) 50%,
+                    hsl(40, 90%, 96%) 100%);
+            min-height: 100vh;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg,
+                    hsl(210, 30%, 8%) 0%,
+                    hsl(210, 25%, 12%) 50%,
+                    hsl(210, 20%, 10%) 100%);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .nav-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .nav-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-header p {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            gap: 0.75rem;
+            color: var(--color-accent);
+        }
+
+        .room-finder {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .room-finder h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.875rem 1.25rem;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background: var(--color-background);
+            color: var(--color-text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 90, 142, 0.1);
+        }
+
+        .search-box button {
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-result {
+            padding: 1rem;
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--color-primary);
+            display: none;
+        }
+
+        .search-result.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .floor-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .floor-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem 1.5rem;
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .floor-btn:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .floor-btn.active {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-color: transparent;
+        }
+
+        .floor-map {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: none;
+        }
+
+        .floor-map.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .floor-map h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .map-image {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .map-image:hover {
+            transform: scale(1.02);
+        }
+
+        .room-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .room-item {
+            padding: 1rem;
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-accent);
+            transition: all 0.3s ease;
+        }
+
+        .room-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .room-item strong {
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .room-item span {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal img {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            color: #000;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+            background: var(--color-accent);
+            color: white;
+        }
+
+
+        /* Voice Search Button */
+        .voice-search-btn-nav {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: var(--color-primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .voice-search-btn-nav:hover {
+            background: var(--color-accent);
+            transform: scale(1.05);
+        }
+
+        .voice-search-btn-nav svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .mic-icon-nav {
+            display: block;
+        }
+
+        .mic-active-icon-nav {
+            display: none;
+            position: absolute;
+        }
+
+        .voice-search-btn-nav.listening {
+            background: var(--gradient-accent);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .voice-search-btn-nav.listening .mic-icon-nav {
+            display: none;
+        }
+
+        .voice-search-btn-nav.listening .mic-active-icon-nav {
+            display: block;
+        }
+
+        .voice-feedback-nav {
+            margin-top: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--gradient-secondary);
+            border-radius: var(--radius-md);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .voice-feedback-nav.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .listening-text-nav {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .listening-text-nav::before {
+            content: '🎤';
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+
+        /* Quick Find Section */
+        .quick-find-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .quick-find-section h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .quick-find-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .quick-find-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-primary);
+        }
+
+        .quick-find-btn:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: var(--color-bg-elevated);
+        }
+
+        .quick-find-btn:active {
+            transform: translateY(0);
+        }
+
+        .qf-icon {
+            font-size: 1.75rem;
+        }
+
+        .qf-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(245, 166, 35, 0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header h1 {
+                font-size: 2rem;
+            }
+
+            .floor-selector {
+                flex-direction: column;
+            }
+
+            .floor-btn {
+                min-width: 100%;
+            }
+
+            .room-list {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-find-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-box {
+                flex-wrap: wrap;
+            }
+
+            .voice-search-btn-nav {
+                order: 3;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+
+        /* TTS Panel Styles */
+        .tts-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--color-surface);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            transition: bottom 0.3s ease;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .tts-panel.active {
+            bottom: 0;
+        }
+
+        .tts-content {
+            padding: 1.5rem;
+        }
+
+        .tts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tts-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+            border-radius: var(--radius-sm);
+        }
+
+        .close-btn:hover {
+            background: var(--color-hover);
+            color: var(--color-primary);
+        }
+
+        .close-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .tts-text {
+            background: var(--color-hover);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .tts-text p {
+            margin: 0;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+
+        .tts-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--color-hover);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border: none;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(30, 90, 142, 0.3);
+        }
+
+        .control-btn:hover {
+            background: var(--color-accent);
+            transform: scale(1.1);
+        }
+
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .control-btn .pause-icon {
+            display: none;
+        }
+
+        .control-btn.playing .play-icon {
+            display: none;
+        }
+
+        .control-btn.playing .pause-icon {
+            display: block;
+        }
+
+        .speed-control,
+        .voice-select {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .speed-label,
+        .voice-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .speed-label svg,
+        .voice-label svg {
+            width: 18px;
+            height: 18px;
+            color: var(--color-primary);
+        }
+
+        .speed-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: var(--radius-sm);
+            background: var(--color-hover);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speed-slider::-webkit-slider-thumb:hover {
+            background: var(--color-accent);
+            transform: scale(1.2);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .speed-slider::-moz-range-thumb:hover {
+            background: var(--color-accent);
+            transform: scale(1.2);
+        }
+
+        .voice-dropdown {
+            padding: 0.75rem;
+            border: 2px solid var(--color-hover);
+            border-radius: var(--radius-md);
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .voice-dropdown:hover,
+        .voice-dropdown:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 142, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+            z-index: 999;
+            padding: 0.5rem;
+        }
+
+        .fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(245, 166, 35, 0.5);
+        }
+
+        .fab svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .fab-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Listen Button for Room Items */
+        .listen-btn {
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .listen-btn:hover {
+            background: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+        }
+
+        .listen-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+                width: 56px;
+                height: 56px;
+            }
+
+            .fab svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .fab-label {
+                font-size: 0.6rem;
+            }
+
+            .tts-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <img src="celtech_logo.png" alt="Celtech College Logo"
+                            style="width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-md);">
+                    </div>
+                    <h1 class="logo-text">V.I.R.A. <span class="accent">Navigation</span></h1>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                        <path
+                            d="M12 1V3M12 21V23M23 12H21M3 12H1M20.49 20.49L19.07 19.07M4.93 4.93L3.51 3.51M20.49 3.51L19.07 4.93M4.93 19.07L3.51 20.49"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="nav-container">
+            <a href="index.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Back to V.I.R.A.
+            </a>
+
+            <div class="nav-header">
+                <h1>🗺️ Campus Navigation</h1>
+                <p>Find your way around Celtech College Olongapo</p>
+            </div>
+
+            <!-- Room Finder -->
+            <div class="room-finder">
+                <h2>🔍 Room Finder</h2>
+                <div class="search-box">
+                    <input type="text" id="roomSearch" placeholder="Search for a room, office, or facility...">
+                    <button class="voice-search-btn-nav" id="voiceSearchBtnNav" aria-label="Voice search"
+                        title="Voice search">
+                        <svg class="mic-icon-nav" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                stroke="currentColor" stroke-width="2" />
+                            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="mic-active-icon-nav" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
+                            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                fill="currentColor" />
+                            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <button onclick="searchRoom()">Find Room</button>
+                </div>
+                <div class="voice-feedback-nav" id="voiceFeedbackNav">
+                    <span class="listening-text-nav">Listening...</span>
+                </div>
+                <div id="searchResult" class="search-result"></div>
+
+                <!-- Quick Find Shortcuts -->
+                <div class="quick-find-section">
+                    <h3>🚀 Quick Find</h3>
+                    <div class="quick-find-buttons">
+                        <button class="quick-find-btn" onclick="quickFind('registrar')">
+                            <span class="qf-icon">📋</span>
+                            <span class="qf-label">Registrar</span>
+                        </button>
+                        <button class="quick-find-btn" onclick="quickFind('library')">
+                            <span class="qf-icon">📚</span>
+                            <span class="qf-label">Library</span>
+                        </button>
+                        <button class="quick-find-btn" onclick="quickFind('canteen')">
+                            <span class="qf-icon">🍽️</span>
+                            <span class="qf-label">Canteen</span>
+                        </button>
+                        <button class="quick-find-btn" onclick="quickFind('clinic')">
+                            <span class="qf-icon">🏥</span>
+                            <span class="qf-label">Clinic</span>
+                        </button>
+                        <button class="quick-find-btn" onclick="quickFind('computer lab')">
+                            <span class="qf-icon">💻</span>
+                            <span class="qf-label">Computer Lab</span>
+                        </button>
+                        <button class="quick-find-btn" onclick="quickFind('auditorium')">
+                            <span class="qf-icon">🎭</span>
+                            <span class="qf-label">Auditorium</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floor Selector -->
+            <div class="floor-selector">
+                <button class="floor-btn active" onclick="showFloor(1)">1st Floor</button>
+                <button class="floor-btn" onclick="showFloor(2)">2nd Floor</button>
+                <button class="floor-btn" onclick="showFloor(3)">3rd Floor</button>
+                <button class="floor-btn" onclick="showFloor(4)">4th Floor</button>
+            </div>
+
+            <!-- Floor Maps -->
+            <div id="floor1" class="floor-map active">
+                <h3>1st Floor - Main Entrance & Administrative Offices</h3>
+                <img src="floor_1st.jpg" alt="1st Floor Map" class="map-image" onclick="openModal(this.src)">
+                <div class="room-list" id="floor1Rooms"></div>
+            </div>
+
+            <div id="floor2" class="floor-map">
+                <h3>2nd Floor - Library & Computer Facilities</h3>
+                <img src="floor_2nd.jpg" alt="2nd Floor Map" class="map-image" onclick="openModal(this.src)">
+                <div class="room-list" id="floor2Rooms"></div>
+            </div>
+
+            <div id="floor3" class="floor-map">
+                <h3>3rd Floor - Skills Lab & Classrooms</h3>
+                <img src="floor_3rd.jpg" alt="3rd Floor Map" class="map-image" onclick="openModal(this.src)">
+                <div class="room-list" id="floor3Rooms"></div>
+            </div>
+
+            <div id="floor4" class="floor-map">
+                <h3>4th Floor - Auditorium & Engineering Facilities</h3>
+                <img src="floor_4th.jpg" alt="4th Floor Map" class="map-image" onclick="openModal(this.src)">
+                <div class="room-list" id="floor4Rooms"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <img id="modalImage" src="" alt="Floor Map">
+    </div>
+
+    <!-- TTS Control Panel -->
+    <div class="tts-panel" id="ttsPanel">
+        <div class="tts-content">
+            <div class="tts-header">
+                <h3 class="tts-title" id="ttsTitle">Select a location to listen</h3>
+                <button class="close-btn" id="closeBtn" aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="tts-text" id="ttsText">
+                <p>Welcome to V.I.R.A. Campus Navigation! Click on any room or use the listen button to hear location
+                    details.</p>
+            </div>
+
+            <div class="tts-controls">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="control-btn" id="playBtn" aria-label="Play">
+                        <svg class="play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
+                        </svg>
+                        <svg class="pause-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="4" width="4" height="16" fill="currentColor" />
+                            <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="stopBtn" aria-label="Stop">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="6" width="12" height="12" fill="currentColor" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="speedSlider" class="speed-label">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Speed: <span id="speedValue">1.0</span>x
+                    </label>
+                    <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1" class="speed-slider">
+                </div>
+
+                <div class="voice-select">
+                    <label for="voiceSelector" class="voice-label">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                                stroke="currentColor" stroke-width="2" />
+                            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Voice
+                    </label>
+                    <select id="voiceSelector" class="voice-dropdown"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Assistant Floating Action Button -->
+    <button class="fab voice-assistant-fab" id="fabBtn" aria-label="V.I.R.A. Voice Assistant"
+        title="V.I.R.A. Voice Assistant">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1C8.5 1 6 4 6 7V12C6 15 8.5 18 12 18C15.5 18 18 15 18 12V7C18 4 15.5 1 12 1Z"
+                stroke="currentColor" stroke-width="2" />
+            <path d="M19 10V12C19 16.4183 15.4183 20 11 20C6.58172 20 3 16.4183 3 12V10" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" />
+            <path d="M12 20V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span class="fab-label">V.I.R.A.</span>
+    </button>
+
+    <script src="navigation.js"></script>
+</body>
+
+</html>
