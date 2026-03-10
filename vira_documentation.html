@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V.I.R.A. System Documentation — XML, ERD & DFD</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #6c2bd9;
+    --primary-light: #8b5cf6;
+    --accent: #06b6d4;
+    --accent2: #f59e0b;
+    --bg: #0f0a1e;
+    --surface: #1a1030;
+    --surface2: #231545;
+    --border: rgba(139,92,246,0.25);
+    --text: #e8e0f7;
+    --muted: #9c88cc;
+    --green: #10b981;
+    --red: #f43f5e;
+    --blue: #3b82f6;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+
+  /* COVER PAGE */
+  .cover {
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    background: radial-gradient(ellipse at 30% 20%, rgba(108,43,217,0.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(6,182,212,0.3) 0%, transparent 60%),
+                var(--bg);
+    text-align:center; padding:3rem; page-break-after:always;
+  }
+  .cover-badge {
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:rgba(139,92,246,0.15); border:1px solid var(--border);
+    border-radius:50px; padding:.4rem 1.2rem; font-size:.75rem; color:var(--primary-light);
+    text-transform:uppercase; letter-spacing:.12em; margin-bottom:2rem;
+  }
+  .cover h1 { font-size:3.5rem; font-weight:800; line-height:1.1;
+    background:linear-gradient(135deg,#c4b5fd,#8b5cf6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .cover h2 { font-size:1.2rem; color:var(--muted); margin:.8rem 0 2rem; font-weight:400; }
+  .cover-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:2.5rem 0; max-width:700px; }
+  .cover-card {
+    background:rgba(139,92,246,0.1); border:1px solid var(--border); border-radius:12px; padding:1.2rem;
+    transition:.3s;
+  }
+  .cover-card .icon { font-size:2rem; margin-bottom:.5rem; }
+  .cover-card h3 { font-size:.95rem; font-weight:600; color:var(--primary-light); }
+  .cover-card p { font-size:.75rem; color:var(--muted); margin-top:.25rem; }
+  .cover-meta { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:2rem; }
+  .cover-meta span { font-size:.8rem; color:var(--muted); }
+  .cover-meta strong { color:var(--text); }
+
+  /* SECTION HEADER */
+  .section-header {
+    background: linear-gradient(135deg,rgba(108,43,217,0.2),rgba(6,182,212,0.1));
+    border-left:4px solid var(--primary); padding:1.5rem 2rem; margin-bottom:1.5rem;
+    border-radius:0 12px 12px 0;
+  }
+  .section-header .label { font-size:.7rem; text-transform:uppercase; letter-spacing:.12em; color:var(--accent); margin-bottom:.3rem; }
+  .section-header h2 { font-size:1.8rem; font-weight:700; }
+  .section-header p { color:var(--muted); margin-top:.3rem; font-size:.9rem; }
+
+  /* CONTENT PAGE */
+  .page { padding:2rem 2.5rem; max-width:1100px; margin:0 auto; }
+  .page-break { page-break-before:always; }
+
+  /* XML SECTION */
+  .xml-container { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:1.5rem; }
+  .xml-header { background:linear-gradient(135deg,var(--surface2),rgba(108,43,217,0.3));
+    padding:.8rem 1.2rem; display:flex; align-items:center; gap:.8rem; border-bottom:1px solid var(--border); }
+  .xml-header .dot { width:10px;height:10px;border-radius:50%; }
+  .xml-body { padding:1.2rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:.8rem; line-height:1.8; overflow-x:auto; }
+  .tag { color:#c4b5fd; }
+  .attr { color:#67e8f9; }
+  .val { color:#fcd34d; }
+  .comment { color:#6b7280; font-style:italic; }
+
+  /* TABLE */
+  .styled-table { width:100%; border-collapse:collapse; margin-bottom:1.5rem; border-radius:12px; overflow:hidden; }
+  .styled-table thead tr { background:linear-gradient(135deg,var(--primary),var(--accent)); }
+  .styled-table thead th { padding:.75rem 1rem; text-align:left; font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+  .styled-table tbody tr { border-bottom:1px solid rgba(139,92,246,0.15); transition:.2s; }
+  .styled-table tbody tr:hover { background:rgba(139,92,246,0.08); }
+  .styled-table tbody td { padding:.65rem 1rem; font-size:.82rem; color:var(--text); }
+  .badge { display:inline-block; padding:.15rem .6rem; border-radius:20px; font-size:.7rem; font-weight:600; }
+  .badge-pk { background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid rgba(245,158,11,0.4); }
+  .badge-fk { background:rgba(59,130,246,0.2); color:#93c5fd; border:1px solid rgba(59,130,246,0.4); }
+  .badge-type { background:rgba(139,92,246,0.2); color:#c4b5fd; border:1px solid var(--border); }
+  .badge-high { background:rgba(244,63,94,0.2); color:#fb7185; }
+  .badge-med { background:rgba(251,191,36,0.2); color:#fbbf24; }
+  .badge-low { background:rgba(16,185,129,0.2); color:#34d399; }
+
+  /* ERD DIAGRAM */
+  .erd-diagram { display:flex; flex-direction:column; gap:1.5rem; margin-bottom:1.5rem; }
+  .erd-row { display:grid; gap:1rem; }
+  .erd-row.cols-3 { grid-template-columns:repeat(3,1fr); }
+  .erd-row.cols-2 { grid-template-columns:repeat(2,1fr); }
+  .erd-entity {
+    background:var(--surface); border:1.5px solid var(--border); border-radius:12px; overflow:hidden;
+    box-shadow:0 4px 20px rgba(108,43,217,0.15);
+  }
+  .erd-entity-header { background:linear-gradient(135deg,var(--primary),var(--primary-light));
+    padding:.6rem 1rem; font-size:.85rem; font-weight:700; letter-spacing:.04em; }
+  .erd-entity-header.accent { background:linear-gradient(135deg,#0891b2,#06b6d4); }
+  .erd-entity-header.green { background:linear-gradient(135deg,#059669,#10b981); }
+  .erd-entity-header.amber { background:linear-gradient(135deg,#d97706,#f59e0b); }
+  .erd-field { display:flex; justify-content:space-between; align-items:center; padding:.4rem 1rem;
+    border-bottom:1px solid rgba(139,92,246,0.1); font-size:.75rem; }
+  .erd-field:last-child { border-bottom:none; }
+  .erd-field-name { color:var(--text); font-family:'JetBrains Mono',monospace; }
+  .erd-field-type { color:var(--muted); font-size:.7rem; }
+
+  /* DFD */
+  .dfd-level { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; }
+  .dfd-title { font-size:1rem; font-weight:700; color:var(--primary-light); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+  .dfd-flow { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .dfd-node {
+    padding:.5rem 1rem; border-radius:8px; font-size:.78rem; font-weight:600; text-align:center; min-width:90px;
+  }
+  .dfd-node.external { background:rgba(6,182,212,0.15); border:1.5px solid rgba(6,182,212,0.4); color:#67e8f9; border-radius:50px; }
+  .dfd-node.process { background:rgba(139,92,246,0.15); border:1.5px solid var(--border); color:#c4b5fd; }
+  .dfd-node.store { background:rgba(16,185,129,0.12); border:1.5px dashed rgba(16,185,129,0.5); color:#34d399; border-radius:4px; }
+  .dfd-arrow { color:var(--muted); font-size:1.1rem; display:flex; align-items:center; flex-direction:column; font-size:.65rem; }
+  .dfd-arrow span { color:var(--muted); }
+  .dfd-processes { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:1rem; }
+  .dfd-process-card {
+    background:rgba(139,92,246,0.08); border:1px solid var(--border); border-radius:10px; padding:1rem;
+  }
+  .dfd-process-card h4 { font-size:.82rem; font-weight:700; color:var(--primary-light); margin-bottom:.5rem; }
+  .dfd-process-card ul { list-style:none; }
+  .dfd-process-card ul li { font-size:.75rem; color:var(--muted); padding:.15rem 0; }
+  .dfd-process-card ul li::before { content:"→ "; color:var(--accent); }
+
+  /* RELATIONSHIPS */
+  .rel-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem;
+    display:flex; align-items:flex-start; gap:.8rem; margin-bottom:.75rem;
+  }
+  .rel-icon { font-size:1.4rem; flex-shrink:0; margin-top:.1rem; }
+  .rel-title { font-size:.85rem; font-weight:600; color:var(--text); }
+  .rel-desc { font-size:.75rem; color:var(--muted); margin-top:.2rem; }
+  .rel-badge { display:inline-block; background:rgba(108,43,217,0.2); color:var(--primary-light);
+    border:1px solid var(--border); border-radius:4px; padding:.1rem .5rem; font-size:.7rem; font-weight:600; margin-left:.5rem; }
+
+  /* INFO GRID */
+  .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .info-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.2rem; }
+  .info-card .num { font-size:2rem; font-weight:800; color:var(--primary-light); }
+  .info-card .label2 { font-size:.75rem; color:var(--muted); }
+
+  /* FOOTER */
+  footer { text-align:center; padding:2rem; color:var(--muted); font-size:.8rem; border-top:1px solid var(--border); margin-top:2rem; }
+
+  /* PRINT */
+  @media print {
+    body { background:#fff; color:#111; }
+    .cover { background:#f5f3ff; }
+    .cover h1 { -webkit-text-fill-color:#4c1d95; }
+    .xml-body { background:#f9f9f9; color:#333; }
+    .tag{color:#7c3aed;} .attr{color:#0891b2;} .val{color:#d97706;} .comment{color:#999;}
+    .section-header { background:#f3f0ff; }
+    .erd-entity,.dfd-level,.rel-card,.info-card,.xml-container { background:#fff; border-color:#d8b4fe; }
+    .styled-table thead tr { background:#7c3aed; }
+    .page-break { page-break-before:always; }
+    .cover { page-break-after:always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== COVER PAGE ===================== -->
+<div class="cover">
+  <div class="cover-badge">📄 Technical Documentation · 2026</div>
+  <h1>V.I.R.A. System<br>Documentation</h1>
+  <h2>Virtual Interactive Resource Assistant — Celtech College Olongapo</h2>
+  <div class="cover-grid">
+    <div class="cover-card">
+      <div class="icon">📋</div>
+      <h3>XML Structure</h3>
+      <p>Data schema & configuration</p>
+    </div>
+    <div class="cover-card">
+      <div class="icon">🗃️</div>
+      <h3>ERD</h3>
+      <p>Entity Relationship Diagram</p>
+    </div>
+    <div class="cover-card">
+      <div class="icon">🔄</div>
+      <h3>DFD</h3>
+      <p>Data Flow Diagram</p>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <span><strong>Version:</strong> 1.0</span>
+    <span><strong>Date:</strong> March 2026</span>
+    <span><strong>Database:</strong> celtech_vira</span>
+    <span><strong>Team:</strong> V.I.R.A. Dev Team</span>
+  </div>
+</div>
+
+<!-- ===================== PAGE 1: XML ===================== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="label">Section 01</div>
+    <h2>📋 XML Data Structure</h2>
+    <p>Structured representation of the V.I.R.A. system data schema in XML format</p>
+  </div>
+
+  <div class="xml-container">
+    <div class="xml-header">
+      <div class="dot" style="background:#f43f5e;"></div>
+      <div class="dot" style="background:#f59e0b;"></div>
+      <div class="dot" style="background:#10b981;"></div>
+      <span style="margin-left:.5rem;font-size:.8rem;color:var(--muted);">vira_schema.xml</span>
+    </div>
+    <div class="xml-body">
+<span class="comment">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br>
+<span class="comment">&lt;!-- V.I.R.A. CeltechVoice Application - Data Schema --&gt;</span><br>
+<span class="tag">&lt;database</span> <span class="attr">name</span>=<span class="val">"celtech_vira"</span> <span class="attr">version</span>=<span class="val">"1.0"</span> <span class="attr">charset</span>=<span class="val">"utf8mb4"</span><span class="tag">&gt;</span><br><br>
+
+&nbsp;&nbsp;<span class="tag">&lt;tables&gt;</span><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">&lt;!-- EVENTS: School events and announcements --&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;table</span> <span class="attr">name</span>=<span class="val">"events"</span> <span class="attr">engine</span>=<span class="val">"InnoDB"</span><span class="tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"id"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(10)"</span> <span class="attr">key</span>=<span class="val">"PRIMARY"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"title"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(255)"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"content"</span> <span class="attr">type</span>=<span class="val">"TEXT"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"event_date"</span> <span class="attr">type</span>=<span class="val">"DATE"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"category"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(50)"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"priority"</span> <span class="attr">type</span>=<span class="val">"ENUM"</span> <span class="attr">values</span>=<span class="val">"high,medium,low"</span> <span class="attr">default</span>=<span class="val">"medium"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"is_active"</span> <span class="attr">type</span>=<span class="val">"BOOLEAN"</span> <span class="attr">default</span>=<span class="val">"true"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"created_at"</span> <span class="attr">type</span>=<span class="val">"TIMESTAMP"</span> <span class="attr">default</span>=<span class="val">"CURRENT_TIMESTAMP"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/table&gt;</span><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">&lt;!-- USER_PREFERENCES: User settings stored client-side --&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;table</span> <span class="attr">name</span>=<span class="val">"user_preferences"</span><span class="tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"user_id"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(50)"</span> <span class="attr">key</span>=<span class="val">"PRIMARY"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"theme"</span> <span class="attr">type</span>=<span class="val">"ENUM"</span> <span class="attr">values</span>=<span class="val">"light,dark"</span> <span class="attr">default</span>=<span class="val">"light"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"voice_id"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(100)"</span> <span class="attr">key</span>=<span class="val">"FOREIGN"</span> <span class="attr">ref</span>=<span class="val">"voice_settings.voice_id"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"speech_rate"</span> <span class="attr">type</span>=<span class="val">"DECIMAL(2,1)"</span> <span class="attr">check</span>=<span class="val">"0.5 TO 2.0"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"search_history"</span> <span class="attr">type</span>=<span class="val">"JSON"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/table&gt;</span><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">&lt;!-- NAVIGATION_DATA: Interactive campus floor plan data --&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;table</span> <span class="attr">name</span>=<span class="val">"navigation_data"</span><span class="tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"id"</span> <span class="attr">type</span>=<span class="val">"INT AUTO_INCREMENT"</span> <span class="attr">key</span>=<span class="val">"PRIMARY"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"floor"</span> <span class="attr">type</span>=<span class="val">"INT"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"name"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(255)"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"type"</span> <span class="attr">type</span>=<span class="val">"ENUM"</span> <span class="attr">values</span>=<span class="val">"office,lab,classroom,facility,amenity"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"coordinate_x"</span> <span class="attr">type</span>=<span class="val">"INT"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"coordinate_y"</span> <span class="attr">type</span>=<span class="val">"INT"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;index</span> <span class="attr">type</span>=<span class="val">"FULLTEXT"</span> <span class="attr">cols</span>=<span class="val">"keywords,description"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/table&gt;</span><br><br>
+
+&nbsp;&nbsp;<span class="tag">&lt;/tables&gt;</span><br><br>
+
+&nbsp;&nbsp;<span class="tag">&lt;relationships&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;relation</span> <span class="attr">from</span>=<span class="val">"user_preferences.voice_id"</span> <span class="attr">to</span>=<span class="val">"voice_settings.voice_id"</span> <span class="attr">type</span>=<span class="val">"ManyToOne"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;relation</span> <span class="attr">from</span>=<span class="val">"search_logs.user_id"</span> <span class="attr">to</span>=<span class="val">"user_preferences.user_id"</span> <span class="attr">type</span>=<span class="val">"ManyToOne"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;relation</span> <span class="attr">from</span>=<span class="val">"tts_usage_logs.voice_id"</span> <span class="attr">to</span>=<span class="val">"voice_settings.voice_id"</span> <span class="attr">type</span>=<span class="val">"ManyToOne"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;<span class="tag">&lt;/relationships&gt;</span><br><br>
+<span class="tag">&lt;/database&gt;</span>
+    </div>
+  </div>
+
+  <!-- XML Sample Data -->
+  <div class="xml-container">
+    <div class="xml-header">
+      <div class="dot" style="background:#f43f5e;"></div>
+      <div class="dot" style="background:#f59e0b;"></div>
+      <div class="dot" style="background:#10b981;"></div>
+      <span style="margin-left:.5rem;font-size:.8rem;color:var(--muted);">vira_data_sample.xml</span>
+    </div>
+    <div class="xml-body">
+<span class="tag">&lt;vira_data&gt;</span><br>
+&nbsp;&nbsp;<span class="tag">&lt;events&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;event</span> <span class="attr">id</span>=<span class="val">"evt1"</span> <span class="attr">priority</span>=<span class="val">"high"</span> <span class="attr">category</span>=<span class="val">"Competition"</span><span class="tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;title&gt;</span>Annual Science Fair 2026<span class="tag">&lt;/title&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;date&gt;</span>2026-02-15<span class="tag">&lt;/date&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/event&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;event</span> <span class="attr">id</span>=<span class="val">"evt2"</span> <span class="attr">priority</span>=<span class="val">"medium"</span> <span class="attr">category</span>=<span class="val">"Sports"</span><span class="tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;title&gt;</span>Basketball Tournament<span class="tag">&lt;/title&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;date&gt;</span>2026-01-25<span class="tag">&lt;/date&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/event&gt;</span><br>
+&nbsp;&nbsp;<span class="tag">&lt;/events&gt;</span><br>
+&nbsp;&nbsp;<span class="tag">&lt;user_preferences&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;user</span> <span class="attr">id</span>=<span class="val">"user_001"</span> <span class="attr">theme</span>=<span class="val">"dark"</span> <span class="attr">voice</span>=<span class="val">"Google US English"</span> <span class="attr">rate</span>=<span class="val">"1.0"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;<span class="tag">&lt;/user_preferences&gt;</span><br>
+<span class="tag">&lt;/vira_data&gt;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 2: ERD ===================== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="label">Section 02</div>
+    <h2>🗃️ Entity Relationship Diagram (ERD)</h2>
+    <p>Complete data model with entities, attributes, and cardinality</p>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card"><div class="num">9</div><div class="label2">Total Tables</div></div>
+    <div class="info-card"><div class="num">4</div><div class="label2">Content Entities</div></div>
+    <div class="info-card"><div class="num">8</div><div class="label2">Relationships</div></div>
+    <div class="info-card"><div class="num">4</div><div class="label2">Database Views</div></div>
+  </div>
+
+  <div class="erd-diagram">
+    <!-- Row 1: Content entities -->
+    <div class="erd-row cols-3">
+      <div class="erd-entity">
+        <div class="erd-entity-header">📅 EVENTS</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
+        <div class="erd-field"><span class="erd-field-name">event_date</span><span class="erd-field-type">DATE</span></div>
+        <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">priority</span><span class="erd-field-type">ENUM</span></div>
+        <div class="erd-field"><span class="erd-field-name">is_active</span><span class="erd-field-type">BOOLEAN</span></div>
+      </div>
+      <div class="erd-entity">
+        <div class="erd-entity-header">🏛️ HISTORY</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
+        <div class="erd-field"><span class="erd-field-name">milestone_date</span><span class="erd-field-type">DATE</span></div>
+        <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">priority</span><span class="erd-field-type">ENUM</span></div>
+        <div class="erd-field"><span class="erd-field-name">is_active</span><span class="erd-field-type">BOOLEAN</span></div>
+      </div>
+      <div class="erd-entity">
+        <div class="erd-entity-header">💻 FACILITIES</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
+        <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">capacity</span><span class="erd-field-type">INT</span></div>
+        <div class="erd-field"><span class="erd-field-name">operating_hours</span><span class="erd-field-type">VARCHAR</span></div>
+        <div class="erd-field"><span class="erd-field-name">priority</span><span class="erd-field-type">ENUM</span></div>
+      </div>
+    </div>
+
+    <div class="erd-row cols-3">
+      <div class="erd-entity">
+        <div class="erd-entity-header accent">🏢 CAMPUS_GUIDE</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
+        <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">floor_number</span><span class="erd-field-type">INT</span></div>
+        <div class="erd-field"><span class="erd-field-name">priority</span><span class="erd-field-type">ENUM</span></div>
+      </div>
+      <div class="erd-entity">
+        <div class="erd-entity-header accent">🗺️ NAVIGATION_DATA</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">INT AUTO_INC</span></div>
+        <div class="erd-field"><span class="erd-field-name">floor</span><span class="erd-field-type">INT</span></div>
+        <div class="erd-field"><span class="erd-field-name">name</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">type</span><span class="erd-field-type">ENUM</span></div>
+        <div class="erd-field"><span class="erd-field-name">coordinate_x</span><span class="erd-field-type">INT</span></div>
+        <div class="erd-field"><span class="erd-field-name">coordinate_y</span><span class="erd-field-type">INT</span></div>
+        <div class="erd-field"><span class="erd-field-name">keywords</span><span class="erd-field-type">TEXT (FULLTEXT)</span></div>
+      </div>
+      <div class="erd-entity">
+        <div class="erd-entity-header green">🔊 VOICE_SETTINGS</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> voice_id</span><span class="erd-field-type">VARCHAR(100)</span></div>
+        <div class="erd-field"><span class="erd-field-name">name</span><span class="erd-field-type">VARCHAR(255)</span></div>
+        <div class="erd-field"><span class="erd-field-name">lang</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">gender</span><span class="erd-field-type">ENUM</span></div>
+        <div class="erd-field"><span class="erd-field-name">local_service</span><span class="erd-field-type">BOOLEAN</span></div>
+        <div class="erd-field"><span class="erd-field-name">is_active</span><span class="erd-field-type">BOOLEAN</span></div>
+      </div>
+    </div>
+
+    <div class="erd-row cols-2">
+      <div class="erd-entity">
+        <div class="erd-entity-header amber">👤 USER_PREFERENCES</div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> user_id</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">theme</span><span class="erd-field-type">ENUM(light,dark)</span></div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-fk">FK</span> voice_id</span><span class="erd-field-type">→ voice_settings</span></div>
+        <div class="erd-field"><span class="erd-field-name">speech_rate</span><span class="erd-field-type">DECIMAL(2,1)</span></div>
+        <div class="erd-field"><span class="erd-field-name">last_category</span><span class="erd-field-type">VARCHAR(50)</span></div>
+        <div class="erd-field"><span class="erd-field-name">search_history</span><span class="erd-field-type">JSON</span></div>
+        <div class="erd-field"><span class="erd-field-name">last_login</span><span class="erd-field-type">TIMESTAMP</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="erd-entity">
+          <div class="erd-entity-header" style="background:linear-gradient(135deg,#be185d,#f43f5e);">🔍 SEARCH_LOGS</div>
+          <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">INT AUTO_INC</span></div>
+          <div class="erd-field"><span class="erd-field-name"><span class="badge badge-fk">FK</span> user_id</span><span class="erd-field-type">→ user_preferences</span></div>
+          <div class="erd-field"><span class="erd-field-name">search_query</span><span class="erd-field-type">VARCHAR(255)</span></div>
+          <div class="erd-field"><span class="erd-field-name">search_type</span><span class="erd-field-type">ENUM(text,voice)</span></div>
+        </div>
+        <div class="erd-entity">
+          <div class="erd-entity-header" style="background:linear-gradient(135deg,#be185d,#f43f5e);">📊 TTS_USAGE_LOGS</div>
+          <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">INT AUTO_INC</span></div>
+          <div class="erd-field"><span class="erd-field-name"><span class="badge badge-fk">FK</span> user_id</span><span class="erd-field-type">→ user_preferences</span></div>
+          <div class="erd-field"><span class="erd-field-name">content_type</span><span class="erd-field-type">ENUM</span></div>
+          <div class="erd-field"><span class="erd-field-name"><span class="badge badge-fk">FK</span> voice_id</span><span class="erd-field-type">→ voice_settings</span></div>
+          <div class="erd-field"><span class="erd-field-name">duration_seconds</span><span class="erd-field-type">INT</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relationships -->
+  <h3 style="color:var(--primary-light);margin-bottom:1rem;font-size:1rem;">Key Relationships</h3>
+  <div class="rel-card"><div class="rel-icon">📅</div><div><div class="rel-title">EVENTS → TTS_USAGE_LOGS <span class="rel-badge">1:N</span></div><div class="rel-desc">One event can be played multiple times; each log references a single event.</div></div></div>
+  <div class="rel-card"><div class="rel-icon">👤</div><div><div class="rel-title">USER_PREFERENCES → VOICE_SETTINGS <span class="rel-badge">N:1</span></div><div class="rel-desc">Multiple users may share the same voice; each user has one active voice preference (FK: voice_id).</div></div></div>
+  <div class="rel-card"><div class="rel-icon">🔍</div><div><div class="rel-title">USER_PREFERENCES → SEARCH_LOGS <span class="rel-badge">1:N</span></div><div class="rel-desc">One user can perform many searches; each search log belongs to one user session.</div></div></div>
+  <div class="rel-card"><div class="rel-icon">🔊</div><div><div class="rel-title">VOICE_SETTINGS → TTS_USAGE_LOGS <span class="rel-badge">1:N</span></div><div class="rel-desc">One voice configuration can power many TTS sessions logged over time.</div></div></div>
+</div>
+
+<!-- ===================== PAGE 3: DFD ===================== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="label">Section 03</div>
+    <h2>🔄 Data Flow Diagram (DFD)</h2>
+    <p>System data flows from Level 0 (Context) through Level 2 (Detailed Processes)</p>
+  </div>
+
+  <!-- Level 0 -->
+  <div class="dfd-level">
+    <div class="dfd-title">⬤ Level 0 — Context Diagram</div>
+    <div class="dfd-flow">
+      <div class="dfd-node external">👤 USER</div>
+      <div class="dfd-arrow">──── Voice / Search / UI ────▶<span></span></div>
+      <div class="dfd-node process" style="padding:.7rem 1.5rem;font-size:.9rem;">V.I.R.A.<br>SYSTEM</div>
+      <div class="dfd-arrow">──── Audio / Content / Maps ────▶<span></span></div>
+      <div class="dfd-node external">👂 USER<br>(Output)</div>
+    </div>
+    <div class="dfd-flow" style="margin-top:.8rem;">
+      <div class="dfd-node store">📁 data.js (School Data)</div>
+      <div style="width:1rem;"></div>
+      <div class="dfd-node store">💾 LocalStorage (Prefs)</div>
+      <div style="width:1rem;"></div>
+      <div class="dfd-node store">🗺️ navigation.js (Maps)</div>
+      <div style="width:1rem;"></div>
+      <div class="dfd-node external">🌐 Web Speech API</div>
+    </div>
+  </div>
+
+  <!-- Level 1 -->
+  <div class="dfd-level">
+    <div class="dfd-title">⬤ Level 1 — Main System Processes</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;align-items:center;margin-bottom:1rem;">
+      <div class="dfd-node external" style="text-align:center;">👤 USER</div>
+      <div style="text-align:center;font-size:.7rem;color:var(--muted);">Search / Category / Voice</div>
+      <div style="display:grid;grid-template-columns:1fr;gap:.5rem;">
+        <div class="dfd-node process">P1: Search Engine</div>
+        <div class="dfd-node process">P2: Content Display</div>
+        <div class="dfd-node process">P3: Voice Assistant</div>
+      </div>
+      <div style="text-align:center;font-size:.7rem;color:var(--muted);">Results / Items / Text</div>
+      <div class="dfd-node process">P4: TTS Engine</div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <div class="dfd-node store">DS1: School Data</div>
+      <div style="font-size:.75rem;color:var(--muted);align-self:center;">→ feeds P1, P2, P3</div>
+      <div class="dfd-node store">DS2: User Preferences</div>
+      <div style="font-size:.75rem;color:var(--muted);align-self:center;">→ feeds P4</div>
+      <div class="dfd-node store">DS3: Navigation Data</div>
+      <div style="font-size:.75rem;color:var(--muted);align-self:center;">→ feeds P5: Maps</div>
+    </div>
+  </div>
+
+  <!-- Level 2 -->
+  <div class="dfd-level">
+    <div class="dfd-title">⬤ Level 2 — Detailed Process Breakdown</div>
+    <div class="dfd-processes">
+      <div class="dfd-process-card">
+        <h4>P1: Search Engine</h4>
+        <ul>
+          <li>1.1 Input Validation (sanitize, lowercase)</li>
+          <li>1.2 Search Algorithm (titles, content, nav)</li>
+          <li>1.3 Result Ranking by relevance</li>
+          <li>1.4 DOM Rendering of result cards</li>
+        </ul>
+      </div>
+      <div class="dfd-process-card">
+        <h4>P2: Content Display</h4>
+        <ul>
+          <li>2.1 Category Filter (tab selection)</li>
+          <li>2.2 Data Retrieval from schoolData[]</li>
+          <li>2.3 Card Generation (HTML elements)</li>
+          <li>2.4 DOM Rendering with animations</li>
+        </ul>
+      </div>
+      <div class="dfd-process-card">
+        <h4>P3: Voice Assistant</h4>
+        <ul>
+          <li>3.1 Microphone Access & permission</li>
+          <li>3.2 Speech Recognition API stream</li>
+          <li>3.3 Command Parsing & intent detection</li>
+          <li>3.4 Action Execution (search/navigate/TTS)</li>
+        </ul>
+      </div>
+      <div class="dfd-process-card">
+        <h4>P4: TTS Engine</h4>
+        <ul>
+          <li>4.1 Content Extraction (text/title)</li>
+          <li>4.2 Settings Retrieval (voice, rate, vol)</li>
+          <li>4.3 Utterance Creation (SpeechSynthesis)</li>
+          <li>4.4 Speech Synthesis + Progress bar</li>
+        </ul>
+      </div>
+      <div class="dfd-process-card">
+        <h4>P5: Interactive Maps</h4>
+        <ul>
+          <li>5.1 Page Initialization (floor 1 default)</li>
+          <li>5.2 Floor Data Retrieval by floor number</li>
+          <li>5.3 Map Rendering + hotspot markers</li>
+          <li>5.4 Location Search & highlight</li>
+        </ul>
+      </div>
+      <div class="dfd-process-card">
+        <h4>Cross-Cutting Flows</h4>
+        <ul>
+          <li>Theme Toggle → LocalStorage → CSS class</li>
+          <li>Debounced Search (300ms pause)</li>
+          <li>PWA: Cache → Offline → Background sync</li>
+          <li>Error handling → Reset → Retry</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data flow table -->
+  <h3 style="color:var(--primary-light);margin:1.5rem 0 .75rem;font-size:1rem;">Data Flow Summary Table</h3>
+  <table class="styled-table">
+    <thead>
+      <tr><th>Flow</th><th>Input</th><th>Process</th><th>Output</th><th>Store</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🔍 Search</td><td>User query (text/voice)</td><td>P1: Search Engine</td><td>Result cards</td><td>DS1 School Data</td></tr>
+      <tr><td>🔊 TTS</td><td>Content card click</td><td>P4: TTS Engine</td><td>Audio stream</td><td>DS2 User Prefs</td></tr>
+      <tr><td>🎤 Voice</td><td>Microphone audio</td><td>P3: Voice Assistant</td><td>Command action</td><td>—</td></tr>
+      <tr><td>🗺️ Map</td><td>Floor selection</td><td>P5: Interactive Maps</td><td>Floor plan + pins</td><td>DS3 Nav Data</td></tr>
+      <tr><td>🌓 Theme</td><td>Toggle click</td><td>Theme Manager</td><td>CSS class change</td><td>DS2 LocalStorage</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  <strong>V.I.R.A.</strong> — Virtual Interactive Resource Assistant &nbsp;|&nbsp; Celtech College Olongapo &nbsp;|&nbsp; Documentation v1.0 &nbsp;|&nbsp; March 2026<br>
+  <span style="margin-top:.3rem;display:block;">Sections: XML Data Structure · Entity Relationship Diagram · Data Flow Diagram</span>
+</footer>
+
+<script>
+  // Print-to-PDF helper
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      document.title = 'VIRA_XML_ERD_DFD_Documentation';
+    }
+  });
+</script>
+</body>
+</html>

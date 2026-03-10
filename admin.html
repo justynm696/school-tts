@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.I.R.A. Admin Panel — Celtech College</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- ============================================================
+     LOGIN OVERLAY
+     ============================================================ -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <div class="login-logo">🛡️</div>
+            <div class="login-title">Admin Access</div>
+            <div class="login-subtitle">V.I.R.A. · Celtech College Olongapo</div>
+            <div class="login-field">
+                <input type="password" id="pinInput" maxlength="6" placeholder="Enter PIN" autocomplete="off"
+                    inputmode="numeric" pattern="[0-9]*">
+                <span class="login-error" id="loginError"></span>
+            </div>
+            <button class="btn-login" id="loginBtn">Unlock Admin Panel</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     CONFIRM DIALOG
+     ============================================================ -->
+    <div id="confirmOverlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+            <div class="confirm-msg" id="confirmMsg">This action cannot be undone.</div>
+            <div class="confirm-actions">
+                <button class="btn" id="confirmCancelBtn">Cancel</button>
+                <button class="btn danger" id="confirmOkBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     MODAL OVERLAY
+     ============================================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit Item</h3>
+                <button class="modal-close" id="modalCloseBtn">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"><!-- injected by JS --></div>
+            <div class="modal-footer">
+                <button class="btn" id="modalCancelBtn">Cancel</button>
+                <button class="btn primary" id="modalSaveBtn">💾 Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+    <div id="toastContainer"></div>
+
+    <!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+    <div id="adminApp">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">🎓</div>
+                <div>
+                    <div class="brand-text">V.I.R.A. Admin</div>
+                    <div class="brand-sub">Celtech College</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Overview</div>
+                <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </button>
+
+                <div class="sidebar-section-label">Content</div>
+                <button class="nav-item" data-page="events" id="nav-events">
+                    <span class="nav-icon">📅</span> Events
+                    <span class="nav-badge" id="badge-events">0</span>
+                </button>
+                <button class="nav-item" data-page="history" id="nav-history">
+                    <span class="nav-icon">🏛️</span> History
+                    <span class="nav-badge" id="badge-history">0</span>
+                </button>
+                <button class="nav-item" data-page="facilities" id="nav-facilities">
+                    <span class="nav-icon">🏢</span> Facilities
+                    <span class="nav-badge" id="badge-facilities">0</span>
+                </button>
+                <button class="nav-item" data-page="campus_guide" id="nav-campus_guide">
+                    <span class="nav-icon">🗺️</span> Campus Guide
+                    <span class="nav-badge" id="badge-campus_guide">0</span>
+                </button>
+
+                <div class="sidebar-section-label">Tools</div>
+                <button class="nav-item" data-page="settings" id="nav-settings">
+                    <span class="nav-icon">⚙️</span> Settings
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="nav-item" style="text-decoration:none;">
+                    <span class="nav-icon">↩️</span> Back to V.I.R.A.
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-wrap">
+
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <button class="topbar-hamburger" id="hamburgerBtn">☰</button>
+                <div style="flex:1">
+                    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+                    <div class="topbar-subtitle">V.I.R.A. Content Management System</div>
+                </div>
+                <div class="topbar-actions">
+                    <span class="topbar-chip">● Live</span>
+                    <button class="btn-topbar" id="exportBtn" title="Export all data as JSON">
+                        📤 Export JSON
+                    </button>
+                    <button class="btn-topbar primary" id="topbarAddBtn" style="display:none">
+                        ＋ Add Item
+                    </button>
+                </div>
+            </div>
+
+            <div class="page-content">
+
+                <!-- ───────────── DASHBOARD ───────────── -->
+                <section class="page-section active" id="page-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-events" style="cursor:pointer" onclick="goToPage('events')">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-value" id="dash-events-count">—</div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                        <div class="stat-card stat-history" style="cursor:pointer" onclick="goToPage('history')">
+                            <div class="stat-icon">🏛️</div>
+                            <div class="stat-value" id="dash-history-count">—</div>
+                            <div class="stat-label">History Entries</div>
+                        </div>
+                        <div class="stat-card stat-fac" style="cursor:pointer" onclick="goToPage('facilities')">
+                            <div class="stat-icon">🏢</div>
+                            <div class="stat-value" id="dash-fac-count">—</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-card stat-guide" style="cursor:pointer" onclick="goToPage('campus_guide')">
+                            <div class="stat-icon">🗺️</div>
+                            <div class="stat-value" id="dash-guide-count">—</div>
+                            <div class="stat-label">Campus Guide Entries</div>
+                        </div>
+                        <div class="stat-card stat-nav" style="cursor:pointer" onclick="goToPage('events')">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-value" id="dash-total-count">—</div>
+                            <div class="stat-label">Total Content Items</div>
+                        </div>
+                        <div class="stat-card stat-nav"
+                            style="cursor:default; --stat-accent:linear-gradient(90deg,#f59e0b,#fbbf24)">
+                            <div class="stat-icon">🔄</div>
+                            <div class="stat-value" id="dash-modified">—</div>
+                            <div class="stat-label">Data Source</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dash-card">
+                            <div class="dash-card-header">📋 All Events</div>
+                            <div class="dash-card-body" id="dashEventsList"></div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="dash-card-header">🏢 All Facilities</div>
+                            <div class="dash-card-body" id="dashFacsList"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────────── EVENTS ───────────── -->
+                <section class="page-section" id="page-events">
+                    <div class="section-header">
+                        <h2>📅 Events</h2>
+                        <input class="section-search" id="search-events" placeholder="🔍 Search events…">
+                        <button class="btn primary" id="addEventsBtn">＋ Add Event</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="events-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ───────────── HISTORY ───────────── -->
+                <section class="page-section" id="page-history">
+                    <div class="section-header">
+                        <h2>🏛️ History</h2>
+                        <input class="section-search" id="search-history" placeholder="🔍 Search history…">
+                        <button class="btn primary" id="addHistoryBtn">＋ Add Entry</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ───────────── FACILITIES ───────────── -->
+                <section class="page-section" id="page-facilities">
+                    <div class="section-header">
+                        <h2>🏢 Facilities</h2>
+                        <input class="section-search" id="search-facilities" placeholder="🔍 Search facilities…">
+                        <button class="btn primary" id="addFacilitiesBtn">＋ Add Facility</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facilities-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ───────────── CAMPUS GUIDE ───────────── -->
+                <section class="page-section" id="page-campus_guide">
+                    <div class="section-header">
+                        <h2>🗺️ Campus Guide</h2>
+                        <input class="section-search" id="search-campus_guide" placeholder="🔍 Search campus guide…">
+                        <button class="btn primary" id="addCampusGuideBtn">＋ Add Guide Entry</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campus_guide-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ───────────── SETTINGS ───────────── -->
+                <section class="page-section" id="page-settings">
+                    <div class="section-header" style="margin-bottom:24px">
+                        <h2>⚙️ Settings</h2>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h3>🔑 Change Admin PIN</h3>
+                            <p>Update the PIN used to access this admin panel. Default is <code>1234</code>.</p>
+                            <div class="form-group">
+                                <label>Current PIN</label>
+                                <input type="password" id="currentPin" placeholder="Current PIN" maxlength="6"
+                                    inputmode="numeric">
+                            </div>
+                            <div class="form-group">
+                                <label>New PIN</label>
+                                <input type="password" id="newPin" placeholder="New PIN (4-6 digits)" maxlength="6"
+                                    inputmode="numeric">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New PIN</label>
+                                <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="6"
+                                    inputmode="numeric">
+                            </div>
+                            <button class="btn primary" id="changePinBtn">🔑 Update PIN</button>
+                        </div>
+
+                        <div class="setting-card">
+                            <h3>🔄 Reset Data</h3>
+                            <p>Restore all content to the original defaults from <code>data.js</code>. This will
+                                <strong>permanently discard</strong> all edits stored in localStorage.</p>
+                            <button class="btn danger" id="resetDataBtn" style="margin-bottom:16px">
+                                ⚠️ Reset to Defaults
+                            </button>
+
+                            <h3 style="margin-top:16px">📤 Export Data</h3>
+                            <p style="margin-top:4px">Download a JSON snapshot of all current content.</p>
+                            <button class="btn success" id="exportBtnSettings">📤 Download JSON</button>
+                        </div>
+
+                        <div class="setting-card">
+                            <h3>ℹ️ About</h3>
+                            <p>This admin panel manages the content served by the V.I.R.A. Virtual Interactive Resource
+                                Assistant at Celtech College Olongapo.</p>
+                            <p style="margin-top:8px">Changes are saved to <strong>localStorage</strong> in your browser
+                                and picked up automatically by the main V.I.R.A. app when opened in the same browser.
+                            </p>
+                            <p style="margin-top:8px; font-size:0.78rem; color: var(--text-muted);">Version 1.0 · Built
+                                March 2026</p>
+                        </div>
+
+                        <div class="setting-card">
+                            <h3>🔗 Quick Links</h3>
+                            <p>Open V.I.R.A. pages directly from here.</p>
+                            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+                                <a href="index.html" class="btn" style="text-decoration:none;justify-content:center">🏠
+                                    Main App (index.html)</a>
+                                <a href="navigation.html" class="btn"
+                                    style="text-decoration:none;justify-content:center">🧭 Interactive Maps</a>
+                                <a href="guide.html" class="btn" style="text-decoration:none;justify-content:center">📖
+                                    Guide Page</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div><!-- /page-content -->
+        </div><!-- /main-wrap -->
+    </div><!-- /adminApp -->
+
+    <script src="data.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

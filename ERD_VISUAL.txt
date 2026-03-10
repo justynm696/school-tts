@@ -1,0 +1,171 @@
+# Visual ERD Diagram (ASCII Art)
+## V.I.R.A. - CeltechVoice Application
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    V.I.R.A. SYSTEM - ENTITY RELATIONSHIP DIAGRAM              ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────┐         ┌─────────────────────┐         ┌─────────────────────┐
+│      EVENTS         │         │      HISTORY        │         │     FACILITIES      │
+├─────────────────────┤         ├─────────────────────┤         ├─────────────────────┤
+│ PK  id              │         │ PK  id              │         │ PK  id              │
+│     title           │         │     title           │         │     title           │
+│     content         │         │     content         │         │     content         │
+│     date            │         │     date            │         │     date            │
+│     category        │         │     category        │         │     category        │
+│     priority        │         │     priority        │         │     priority        │
+│     icon            │         │     icon            │         │     icon            │
+└──────────┬──────────┘         └──────────┬──────────┘         └──────────┬──────────┘
+           │                               │                               │
+           │                               │                               │
+           └───────────────────┬───────────┴───────────────────┬───────────┘
+                               │                               │
+                               │ Displayed in (N:1)            │
+                               ▼                               ▼
+                    ┌──────────────────────────────────────────────┐
+                    │         CONTENT DISPLAY LAYER                │
+                    │      (Category-based Filtering)              │
+                    └──────────────────┬───────────────────────────┘
+                                       │
+                                       │ Searched by (N:1)
+                                       ▼
+                    ┌──────────────────────────────────────────────┐
+                    │            SEARCH ENGINE                     │
+                    │    (Full-text + Voice Search)                │
+                    └──────────────────┬───────────────────────────┘
+                                       │
+                                       │ Reads from (N:1)
+                                       ▼
+                    ┌──────────────────────────────────────────────┐
+                    │             TTS PANEL                        │
+                    │      (Text-to-Speech Playback)               │
+                    └──────────────────┬───────────────────────────┘
+                                       │
+                                       │ Uses (1:1)
+                                       ▼
+┌─────────────────────┐         ┌─────────────────────┐
+│   VOICE_SETTINGS    │◄────────│  USER_PREFERENCES   │
+├─────────────────────┤  FK     ├─────────────────────┤
+│ PK  voiceId         │         │ PK  userId          │
+│     name            │         │ FK  voiceId         │
+│     lang            │         │     theme           │
+│     gender          │         │     speechRate      │
+│     localService    │         │     lastCategory    │
+└─────────────────────┘         │     searchHistory   │
+                                └─────────────────────┘
+
+
+┌─────────────────────┐         ┌─────────────────────┐
+│   CAMPUS_GUIDE      │         │  NAVIGATION_DATA    │
+├─────────────────────┤         ├─────────────────────┤
+│ PK  id              │         │ PK  id              │
+│     title           │         │     floor           │
+│     content         │         │     name            │
+│     category        │         │     type            │
+│     priority        │         │     description     │
+│     icon            │         │     keywords[]      │
+└──────────┬──────────┘         │     coordinates     │
+           │                    │     icon            │
+           │                    └──────────┬──────────┘
+           │                               │
+           │ Linked to (N:M)               │
+           └───────────────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────────────────────────────┐
+                    │         INTERACTIVE MAPS                     │
+                    │      (Floor Plans 1-4)                       │
+                    └──────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+RELATIONSHIP LEGEND:
+
+─────►  One-to-One (1:1)
+═════►  One-to-Many (1:N)
+- - ->  Many-to-Many (N:M)
+
+PK = Primary Key
+FK = Foreign Key
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CARDINALITY DETAILS:
+
+1. EVENTS → CONTENT_DISPLAY (1:N)
+   - One event can be displayed multiple times
+   - Each display shows one event
+
+2. HISTORY → CONTENT_DISPLAY (1:N)
+   - One history item can be displayed multiple times
+   - Each display shows one history item
+
+3. FACILITIES → CONTENT_DISPLAY (1:N)
+   - One facility can be displayed multiple times
+   - Each display shows one facility
+
+4. CAMPUS_GUIDE → CONTENT_DISPLAY (1:N)
+   - One guide item can be displayed multiple times
+   - Each display shows one guide item
+
+5. USER_PREFERENCES → VOICE_SETTINGS (1:1)
+   - Each user has one active voice setting
+   - Each voice setting can be used by multiple users
+
+6. CONTENT → TTS_PANEL (1:1 Active)
+   - Only one content item can be actively playing at a time
+   - Each TTS session plays one content item
+
+7. CAMPUS_GUIDE ↔ NAVIGATION_DATA (N:M)
+   - Guide items can reference multiple navigation points
+   - Navigation points can be mentioned in multiple guide items
+
+8. NAVIGATION_DATA → INTERACTIVE_MAPS (N:1)
+   - Multiple navigation points belong to one floor plan
+   - Each floor plan contains multiple navigation points
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DATA STORAGE ARCHITECTURE:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          CLIENT-SIDE STORAGE                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐ │
+│  │   LocalStorage       │  │   SessionStorage     │  │   In-Memory      │ │
+│  ├──────────────────────┤  ├──────────────────────┤  ├──────────────────┤ │
+│  │ • theme              │  │ • currentText        │  │ • schoolData     │ │
+│  │ • voicePreference    │  │ • currentTitle       │  │ • navigationData │ │
+│  │ • speechRate         │  │ • isPlaying          │  │ • voices[]       │ │
+│  │ • lastCategory       │  │ • searchQuery        │  │ • currentState   │ │
+│  └──────────────────────┘  └──────────────────────┘  └──────────────────┘ │
+│                                                                             │
+│  Persistent across        Cleared on tab close      Cleared on page reload │
+│  browser sessions                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ENTITY COUNTS (Current):
+
+┌────────────────────┬───────────┬──────────────────────────────────────┐
+│ Entity             │ Count     │ Description                          │
+├────────────────────┼───────────┼──────────────────────────────────────┤
+│ Events             │ 4         │ School events and announcements      │
+│ History            │ 15        │ Institutional milestones             │
+│ Facilities         │ 12        │ Campus facilities and resources      │
+│ Campus Guide       │ 10        │ Navigation and location guides       │
+│ Navigation Data    │ 100+      │ Rooms and locations (4 floors)       │
+│ User Preferences   │ 1/user    │ Per browser session                  │
+│ Voice Settings     │ 10-20     │ Available TTS voices (browser-based) │
+└────────────────────┴───────────┴──────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+```
+
+**Document Version:** 1.0  
+**Last Updated:** February 3, 2026  
+**Author:** V.I.R.A. Development Team

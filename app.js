@@ -222,8 +222,8 @@ function renderContent(category) {
         );
 
         // Search through all categories
-        Object.keys(schoolData).forEach(categoryKey => {
-            const categoryData = schoolData[categoryKey];
+        Object.keys(viRAData).forEach(categoryKey => {
+            const categoryData = viRAData[categoryKey];
             // Convert category key to readable format (e.g., "campus_guide" -> "campus guide")
             const categoryName = categoryKey.replace(/_/g, ' ').toLowerCase();
 
@@ -247,7 +247,7 @@ function renderContent(category) {
         filteredData = [...filteredData, ...locationMatches];
     } else {
         // No search query, show current category only
-        const data = schoolData[category] || [];
+        const data = viRAData[category] || [];
         filteredData = data.map(item => ({
             ...item,
             sourceCategory: category

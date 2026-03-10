@@ -380,3 +380,11 @@ const schoolData = {
         }
     ]
 };
+
+// ── Admin integration shim ─────────────────────────────────
+// Reads admin-edited data from localStorage if available,
+// otherwise falls back to the default schoolData above.
+(function () {
+    const saved = localStorage.getItem('vira_data');
+    window.viRAData = saved ? JSON.parse(saved) : schoolData;
+})();

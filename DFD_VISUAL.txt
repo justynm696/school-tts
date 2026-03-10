@@ -1,0 +1,313 @@
+# Visual DFD Diagram (ASCII Art)
+## V.I.R.A. - CeltechVoice Application
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║              V.I.R.A. SYSTEM - DATA FLOW DIAGRAM (LEVEL 1)                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+                              ┌─────────────┐
+                              │    USER     │
+                              │  (Student,  │
+                              │   Visitor,  │
+                              │   Faculty)  │
+                              └──────┬──────┘
+                                     │
+        ┌────────────────────────────┼────────────────────────────┐
+        │                            │                            │
+        │ Search Query               │ Category Selection         │ Voice Command
+        │                            │                            │
+        ▼                            ▼                            ▼
+┌───────────────────┐       ┌───────────────────┐       ┌───────────────────┐
+│                   │       │                   │       │                   │
+│   ╭─────────╮     │       │   ╭─────────╮     │       │   ╭─────────╮     │
+│   │ PROCESS │     │       │   │ PROCESS │     │       │   │ PROCESS │     │
+│   │   1.0   │     │       │   │   2.0   │     │       │   │   3.0   │     │
+│   ╰─────────╯     │       │   ╰─────────╯     │       │   ╰─────────╯     │
+│                   │       │                   │       │                   │
+│  SEARCH ENGINE    │       │ CONTENT DISPLAY   │       │ VOICE ASSISTANT   │
+│                   │       │                   │       │                   │
+│ • Input validation│       │ • Category filter │       │ • Mic access      │
+│ • Query processing│       │ • Data retrieval  │       │ • Speech recog.   │
+│ • Result ranking  │       │ • Card generation │       │ • Command parse   │
+│ • Display results │       │ • DOM rendering   │       │ • Action execute  │
+│                   │       │                   │       │                   │
+└─────────┬─────────┘       └─────────┬─────────┘       └─────────┬─────────┘
+          │                           │                           │
+          │ Filtered Results          │ Content Items             │ Recognized Text
+          │                           │                           │
+          └───────────────────────────┼───────────────────────────┘
+                                      │
+                                      │ Selected Content
+                                      ▼
+                              ┌───────────────────┐
+                              │                   │
+                              │   ╭─────────╮     │
+                              │   │ PROCESS │     │
+                              │   │   4.0   │     │
+                              │   ╰─────────╯     │
+                              │                   │
+                              │    TTS ENGINE     │
+                              │                   │
+                              │ • Text extraction │
+                              │ • Settings load   │
+                              │ • Utterance create│
+                              │ • Speech synthesis│
+                              │ • Progress track  │
+                              │                   │
+                              └─────────┬─────────┘
+                                        │
+                                        │ Audio Output
+                                        ▼
+                              ┌───────────────────┐
+                              │   WEB SPEECH API  │
+                              │  (External System)│
+                              └─────────┬─────────┘
+                                        │
+                                        │ Audio Stream
+                                        ▼
+                              ┌───────────────────┐
+                              │       USER        │
+                              │    (Listening)    │
+                              └───────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                              DATA STORES
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  ╔══════════════════════════════════════════════════════════════════════╗  │
+│  ║  D1: SCHOOL DATA (data.js)                                           ║  │
+│  ╠══════════════════════════════════════════════════════════════════════╣  │
+│  ║  • events[]                                                          ║  │
+│  ║  • history[]                                                         ║  │
+│  ║  • facilities[]                                                      ║  │
+│  ║  • campus_guide[]                                                    ║  │
+│  ╚══════════════════════════════════════════════════════════════════════╝  │
+│           ▲                    ▲                    ▲                       │
+│           │                    │                    │                       │
+│           │ Read Data          │ Read Data          │ Read Data             │
+│           │                    │                    │                       │
+│      PROCESS 1.0          PROCESS 2.0          PROCESS 3.0                  │
+│    (Search Engine)      (Content Display)    (Voice Assistant)              │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  ╔══════════════════════════════════════════════════════════════════════╗  │
+│  ║  D2: USER PREFERENCES (LocalStorage)                                 ║  │
+│  ╠══════════════════════════════════════════════════════════════════════╣  │
+│  ║  • theme (light/dark)                                                ║  │
+│  ║  • voiceId                                                           ║  │
+│  ║  • speechRate                                                        ║  │
+│  ║  • lastCategory                                                      ║  │
+│  ║  • searchHistory[]                                                   ║  │
+│  ╚══════════════════════════════════════════════════════════════════════╝  │
+│           ▲                                                                 │
+│           │                                                                 │
+│           │ Read/Write Settings                                             │
+│           │                                                                 │
+│      PROCESS 4.0                                                            │
+│     (TTS Engine)                                                            │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  ╔══════════════════════════════════════════════════════════════════════╗  │
+│  ║  D3: NAVIGATION DATA (navigation.js)                                 ║  │
+│  ╠══════════════════════════════════════════════════════════════════════╣  │
+│  ║  • floors[1..4]                                                      ║  │
+│  ║  • locations[]                                                       ║  │
+│  ║  • coordinates                                                       ║  │
+│  ╚══════════════════════════════════════════════════════════════════════╝  │
+│           ▲                                                                 │
+│           │                                                                 │
+│           │ Read Location Data                                              │
+│           │                                                                 │
+│      PROCESS 5.0                                                            │
+│  (Interactive Maps)                                                         │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        INTERACTIVE MAPS PROCESS
+
+                              ┌─────────────┐
+                              │    USER     │
+                              └──────┬──────┘
+                                     │
+                                     │ Navigate to Maps
+                                     ▼
+                              ┌───────────────────┐
+                              │                   │
+                              │   ╭─────────╮     │
+                              │   │ PROCESS │     │
+                              │   │   5.0   │     │
+                              │   ╰─────────╯     │
+                              │                   │
+                              │ INTERACTIVE MAPS  │
+                              │                   │
+                              │ • Floor selection │
+                              │ • Map rendering   │
+                              │ • Location search │
+                              │ • Marker display  │
+                              │ • Details popup   │
+                              │                   │
+                              └─────────┬─────────┘
+                                        │
+                                        │ Floor Plan + Markers
+                                        ▼
+                              ┌───────────────────┐
+                              │       USER        │
+                              │    (Viewing)      │
+                              └───────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        EXTERNAL INTERFACES
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  WEB SPEECH API (Speech Synthesis)                                   │  │
+│  ├──────────────────────────────────────────────────────────────────────┤  │
+│  │  Input:  Text string, voice settings                                 │  │
+│  │  Output: Audio stream                                                │  │
+│  │  Used by: PROCESS 4.0 (TTS Engine)                                   │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  WEB SPEECH API (Speech Recognition)                                 │  │
+│  ├──────────────────────────────────────────────────────────────────────┤  │
+│  │  Input:  Audio stream from microphone                                │  │
+│  │  Output: Recognized text                                             │  │
+│  │  Used by: PROCESS 3.0 (Voice Assistant)                              │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  LOCALSTORAGE API                                                    │  │
+│  ├──────────────────────────────────────────────────────────────────────┤  │
+│  │  Input:  Key-value pairs                                             │  │
+│  │  Output: Stored data retrieval                                       │  │
+│  │  Used by: All processes for persistence                              │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  SERVICE WORKER                                                      │  │
+│  ├──────────────────────────────────────────────────────────────────────┤  │
+│  │  Input:  Network requests                                            │  │
+│  │  Output: Cached resources, offline functionality                     │  │
+│  │  Used by: All processes for PWA capabilities                         │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        DATA FLOW EXAMPLES
+
+EXAMPLE 1: Search Flow
+──────────────────────
+User Input: "library"
+    ↓
+PROCESS 1.0: Search Engine
+    ↓ Read from D1 (School Data)
+    ↓ Read from D3 (Navigation Data)
+    ↓
+Results: [Facility: Library, Guide: 2nd Floor, Location: Library Room]
+    ↓
+Display to User
+
+
+EXAMPLE 2: TTS Playback Flow
+─────────────────────────────
+User Clicks: Event Card
+    ↓
+PROCESS 2.0: Content Display
+    ↓ Extract content
+    ↓
+PROCESS 4.0: TTS Engine
+    ↓ Read from D2 (User Preferences)
+    ↓ Create utterance
+    ↓
+Web Speech API
+    ↓ Generate audio
+    ↓
+Audio Output to User
+
+
+EXAMPLE 3: Voice Command Flow
+──────────────────────────────
+User Speaks: "Show me the canteen"
+    ↓
+Web Speech API (Recognition)
+    ↓ Convert to text
+    ↓
+PROCESS 3.0: Voice Assistant
+    ↓ Parse command
+    ↓ Read from D3 (Navigation Data)
+    ↓
+PROCESS 5.0: Interactive Maps
+    ↓ Display floor plan
+    ↓ Highlight location
+    ↓
+Visual Output to User
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        PROCESS DETAILS
+
+┌────────┬──────────────────┬─────────────────────┬──────────────────────────┐
+│ ID     │ Process Name     │ Inputs              │ Outputs                  │
+├────────┼──────────────────┼─────────────────────┼──────────────────────────┤
+│ 1.0    │ Search Engine    │ • Search query      │ • Filtered results       │
+│        │                  │ • School data       │ • Result cards           │
+│        │                  │ • Navigation data   │                          │
+├────────┼──────────────────┼─────────────────────┼──────────────────────────┤
+│ 2.0    │ Content Display  │ • Category selection│ • Content cards          │
+│        │                  │ • School data       │ • Visual display         │
+├────────┼──────────────────┼─────────────────────┼──────────────────────────┤
+│ 3.0    │ Voice Assistant  │ • Voice input       │ • Recognized commands    │
+│        │                  │ • Microphone access │ • Action execution       │
+├────────┼──────────────────┼─────────────────────┼──────────────────────────┤
+│ 4.0    │ TTS Engine       │ • Text content      │ • Audio output           │
+│        │                  │ • User preferences  │ • Progress updates       │
+├────────┼──────────────────┼─────────────────────┼──────────────────────────┤
+│ 5.0    │ Interactive Maps │ • Floor selection   │ • Floor plan display     │
+│        │                  │ • Navigation data   │ • Location markers       │
+└────────┴──────────────────┴─────────────────────┴──────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        LEGEND
+
+╭─────────╮
+│ PROCESS │  = Process (numbered circle)
+╰─────────╯
+
+╔═════════╗
+║  DATA   ║  = Data Store (open rectangle)
+╚═════════╝
+
+┌─────────┐
+│ ENTITY  │  = External Entity (rectangle)
+└─────────┘
+
+────────►   = Data Flow (arrow with label)
+
+═══════════════════════════════════════════════════════════════════════════════
+```
+
+**Document Version:** 1.0  
+**Last Updated:** February 3, 2026  
+**Author:** V.I.R.A. Development Team
