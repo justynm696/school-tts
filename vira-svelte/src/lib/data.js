@@ -1,5 +1,5 @@
 // School Information Data
-const schoolData = {
+export const schoolData = {
 
     events: [
         {
@@ -457,23 +457,3 @@ const schoolData = {
     ]
 };
 
-// ── Data integration shim ──────────────────────────────────
-// Priority:  ViraDB (Supabase) → localStorage → schoolData (hardcoded)
-// ViraDB.load() is called in index.html before init(), so by the time
-// any page code runs, window.viRAData is already populated with live data.
-(function () {
-    if (window.ViraDB) {
-        // ViraDB will set window.viRAData when it's ready.
-        // Set a temporary default now so the app doesn't crash before load().
-        const saved = localStorage.getItem('vira_data');
-        window.viRAData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(schoolData));
-        // Keep viRAData in sync whenever ViraDB refreshes
-        document.addEventListener('viradb:ready', e => {
-            window.viRAData = e.detail;
-        });
-    } else {
-        // No ViraDB (e.g. admin page loaded without supabase-client.js) — use localStorage
-        const saved = localStorage.getItem('vira_data');
-        window.viRAData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(schoolData));
-    }
-})();

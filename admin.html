@@ -4,26 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V.I.R.A. Admin Panel — Celtech College</title>
+    <title>V.I.R.A. Admin — Celtech College</title>
     <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
     <!-- ============================================================
-     LOGIN OVERLAY
+     AI THINKING LOADER
+     ============================================================ -->
+    <div id="aiLoader" class="ai-loader hidden">
+        <div class="ai-loader-inner">
+            <div class="ai-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="ai-loader-text">V.I.R.A. AI is processing...</div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     LOGIN OVERLAY — DEPARTMENT SELECTOR
      ============================================================ -->
     <div id="loginOverlay">
-        <div class="login-card">
-            <div class="login-logo">🛡️</div>
-            <div class="login-title">Admin Access</div>
-            <div class="login-subtitle">V.I.R.A. · Celtech College Olongapo</div>
-            <div class="login-field">
-                <input type="password" id="pinInput" maxlength="6" placeholder="Enter PIN" autocomplete="off"
-                    inputmode="numeric" pattern="[0-9]*">
-                <span class="login-error" id="loginError"></span>
+        <!-- Background particles -->
+        <div class="login-bg">
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+            <div class="particle p5"></div>
+        </div>
+
+        <div class="login-container">
+            <!-- Step 1: Choose Department -->
+            <div id="loginStep1" class="login-step active">
+                <div class="login-header">
+                    <div class="login-ai-badge">
+                        <span class="ai-pulse"></span>
+                        AI-Powered System
+                    </div>
+                    <div class="login-logo-wrap">
+                        <img src="celtech_logo.png" alt="Celtech" class="login-school-logo" onerror="this.style.display='none'">
+                        <div class="login-logo-fallback" id="logoFallback">🎓</div>
+                    </div>
+                    <h1 class="login-title">V.I.R.A. Admin</h1>
+                    <p class="login-subtitle">Virtual Interactive Resource Assistant<br>Celtech College Olongapo</p>
+                </div>
+
+                <div class="dept-grid" id="deptGrid">
+                    <!-- Departments rendered by JS -->
+                </div>
+
+                <div class="login-admin-link">
+                    <button class="btn-text-link" id="superAdminBtn">
+                        🛡️ Super Admin Access
+                    </button>
+                </div>
             </div>
-            <button class="btn-login" id="loginBtn">Unlock Admin Panel</button>
+
+            <!-- Step 2: Enter Credentials -->
+            <div id="loginStep2" class="login-step">
+                <button class="login-back-btn" id="loginBackBtn">← Back</button>
+                <div class="login-dept-header" id="loginDeptHeader">
+                    <div class="login-dept-icon" id="loginDeptIcon">🏫</div>
+                    <div>
+                        <div class="login-dept-name" id="loginDeptName">Department</div>
+                        <div class="login-dept-sub">Secured Portal</div>
+                    </div>
+                </div>
+
+                <div class="login-form">
+                    <div class="form-group-login">
+                        <label>Username</label>
+                        <div class="input-icon-wrap">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="form-group-login">
+                        <label>Password</label>
+                        <div class="input-icon-wrap">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+                            <button class="toggle-pw" id="togglePw" tabindex="-1">👁</button>
+                        </div>
+                    </div>
+                    <span class="login-error" id="loginError"></span>
+                    <button class="btn-login" id="loginBtn">
+                        <span id="loginBtnText">🔓 Sign In</span>
+                        <span id="loginBtnSpinner" class="spinner hidden"></span>
+                    </button>
+                </div>
+
+                <div class="login-ai-tip">
+                    <span class="ai-sparkle">✨</span>
+                    <span id="aiTipText">Tip: Contact IT Support if you forgot your credentials.</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -48,7 +127,10 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalBox">
             <div class="modal-header">
-                <h3 id="modalTitle">Edit Item</h3>
+                <div class="modal-header-left">
+                    <div class="modal-ai-icon">🤖</div>
+                    <h3 id="modalTitle">Edit Item</h3>
+                </div>
                 <button class="modal-close" id="modalCloseBtn">✕</button>
             </div>
             <div class="modal-body" id="modalBody"><!-- injected by JS --></div>
@@ -75,38 +157,29 @@
                 <div class="brand-icon">🎓</div>
                 <div>
                     <div class="brand-text">V.I.R.A. Admin</div>
-                    <div class="brand-sub">Celtech College</div>
+                    <div class="brand-sub" id="sidebarDeptLabel">Celtech College</div>
                 </div>
             </div>
 
-            <nav class="sidebar-nav">
-                <div class="sidebar-section-label">Overview</div>
-                <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
-                    <span class="nav-icon">📊</span> Dashboard
-                </button>
+            <!-- AI Status Bar -->
+            <div class="sidebar-ai-bar">
+                <div class="ai-status-dot"></div>
+                <span>AI Assistant Active</span>
+                <span class="ai-model-badge">GPT-4o</span>
+            </div>
 
-                <div class="sidebar-section-label">Content</div>
-                <button class="nav-item" data-page="events" id="nav-events">
-                    <span class="nav-icon">📅</span> Events
-                    <span class="nav-badge" id="badge-events">0</span>
-                </button>
-                <button class="nav-item" data-page="history" id="nav-history">
-                    <span class="nav-icon">🏛️</span> History
-                    <span class="nav-badge" id="badge-history">0</span>
-                </button>
-                <button class="nav-item" data-page="facilities" id="nav-facilities">
-                    <span class="nav-icon">🏢</span> Facilities
-                    <span class="nav-badge" id="badge-facilities">0</span>
-                </button>
-                <button class="nav-item" data-page="campus_guide" id="nav-campus_guide">
-                    <span class="nav-icon">🗺️</span> Campus Guide
-                    <span class="nav-badge" id="badge-campus_guide">0</span>
-                </button>
+            <!-- Logged In User -->
+            <div class="sidebar-user" id="sidebarUser">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Admin</div>
+                    <div class="user-role" id="userRole">Super Administrator</div>
+                </div>
+                <button class="user-logout" id="logoutBtn" title="Logout">⏻</button>
+            </div>
 
-                <div class="sidebar-section-label">Tools</div>
-                <button class="nav-item" data-page="settings" id="nav-settings">
-                    <span class="nav-icon">⚙️</span> Settings
-                </button>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Rendered by JS based on role -->
             </nav>
 
             <div class="sidebar-footer">
@@ -124,12 +197,16 @@
                 <button class="topbar-hamburger" id="hamburgerBtn">☰</button>
                 <div style="flex:1">
                     <div class="topbar-title" id="topbarTitle">Dashboard</div>
-                    <div class="topbar-subtitle">V.I.R.A. Content Management System</div>
+                    <div class="topbar-subtitle">V.I.R.A. AI-Powered Content Management</div>
                 </div>
                 <div class="topbar-actions">
+                    <div class="topbar-ai-chip">
+                        <span class="ai-pulse-sm"></span>
+                        <span>AI Active</span>
+                    </div>
                     <span class="topbar-chip">● Live</span>
                     <button class="btn-topbar" id="exportBtn" title="Export all data as JSON">
-                        📤 Export JSON
+                        📤 Export
                     </button>
                     <button class="btn-topbar primary" id="topbarAddBtn" style="display:none">
                         ＋ Add Item
@@ -141,48 +218,55 @@
 
                 <!-- ───────────── DASHBOARD ───────────── -->
                 <section class="page-section active" id="page-dashboard">
-                    <div class="stats-grid">
-                        <div class="stat-card stat-events" style="cursor:pointer" onclick="goToPage('events')">
-                            <div class="stat-icon">📅</div>
-                            <div class="stat-value" id="dash-events-count">—</div>
-                            <div class="stat-label">Events</div>
+                    <!-- AI Welcome Banner -->
+                    <div class="ai-welcome-banner" id="aiWelcomeBanner">
+                        <div class="ai-avatar-large">🤖</div>
+                        <div class="ai-welcome-content">
+                            <div class="ai-welcome-greeting" id="aiGreeting">Good morning!</div>
+                            <div class="ai-welcome-msg" id="aiWelcomeMsg">Welcome back to V.I.R.A. Admin Panel. Here's your system overview for today.</div>
                         </div>
-                        <div class="stat-card stat-history" style="cursor:pointer" onclick="goToPage('history')">
-                            <div class="stat-icon">🏛️</div>
-                            <div class="stat-value" id="dash-history-count">—</div>
-                            <div class="stat-label">History Entries</div>
-                        </div>
-                        <div class="stat-card stat-fac" style="cursor:pointer" onclick="goToPage('facilities')">
-                            <div class="stat-icon">🏢</div>
-                            <div class="stat-value" id="dash-fac-count">—</div>
-                            <div class="stat-label">Facilities</div>
-                        </div>
-                        <div class="stat-card stat-guide" style="cursor:pointer" onclick="goToPage('campus_guide')">
-                            <div class="stat-icon">🗺️</div>
-                            <div class="stat-value" id="dash-guide-count">—</div>
-                            <div class="stat-label">Campus Guide Entries</div>
-                        </div>
-                        <div class="stat-card stat-nav" style="cursor:pointer" onclick="goToPage('events')">
-                            <div class="stat-icon">✅</div>
-                            <div class="stat-value" id="dash-total-count">—</div>
-                            <div class="stat-label">Total Content Items</div>
-                        </div>
-                        <div class="stat-card stat-nav"
-                            style="cursor:default; --stat-accent:linear-gradient(90deg,#f59e0b,#fbbf24)">
-                            <div class="stat-icon">🔄</div>
-                            <div class="stat-value" id="dash-modified">—</div>
-                            <div class="stat-label">Data Source</div>
-                        </div>
+                        <div class="ai-welcome-time" id="aiWelcomeTime"></div>
+                    </div>
+
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- Rendered by JS -->
                     </div>
 
                     <div class="dashboard-grid">
                         <div class="dash-card">
-                            <div class="dash-card-header">📋 All Events</div>
+                            <div class="dash-card-header">
+                                <span>📋</span> Recent Events
+                                <div class="dash-card-badge" id="dashEventsCount">0</div>
+                            </div>
                             <div class="dash-card-body" id="dashEventsList"></div>
                         </div>
                         <div class="dash-card">
-                            <div class="dash-card-header">🏢 All Facilities</div>
+                            <div class="dash-card-header">
+                                <span>🏢</span> Facilities
+                                <div class="dash-card-badge" id="dashFacsCount">0</div>
+                            </div>
                             <div class="dash-card-body" id="dashFacsList"></div>
+                        </div>
+                    </div>
+
+                    <!-- AI Chat Snippet -->
+                    <div class="ai-chat-preview" id="aiChatPreview">
+                        <div class="ai-chat-header">
+                            <span class="ai-pulse-sm"></span>
+                            <span>V.I.R.A. AI Assistant</span>
+                            <span class="ai-model-badge">Powered by AI</span>
+                        </div>
+                        <div class="ai-messages" id="aiMessages">
+                            <div class="ai-msg ai">
+                                <div class="ai-msg-avatar">🤖</div>
+                                <div class="ai-msg-bubble">
+                                    Hello! I'm V.I.R.A., your AI assistant at Celtech College. How can I help you manage the system today?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-input-row">
+                            <input type="text" class="ai-input" id="aiChatInput" placeholder="Ask V.I.R.A. anything about the system…">
+                            <button class="ai-send-btn" id="aiSendBtn">➤</button>
                         </div>
                     </div>
                 </section>
@@ -280,6 +364,18 @@
                     </div>
                 </section>
 
+                <!-- ───────────── DEPARTMENT ACCOUNTS (Super Admin only) ───────────── -->
+                <section class="page-section" id="page-accounts">
+                    <div class="section-header">
+                        <h2>👥 Department Accounts</h2>
+                        <input class="section-search" id="search-accounts" placeholder="🔍 Search accounts…">
+                        <button class="btn primary" id="addAccountBtn">＋ Add Account</button>
+                    </div>
+                    <div class="accounts-grid" id="accountsGrid">
+                        <!-- rendered by JS -->
+                    </div>
+                </section>
+
                 <!-- ───────────── SETTINGS ───────────── -->
                 <section class="page-section" id="page-settings">
                     <div class="section-header" style="margin-bottom:24px">
@@ -287,30 +383,26 @@
                     </div>
                     <div class="settings-grid">
                         <div class="setting-card">
-                            <h3>🔑 Change Admin PIN</h3>
-                            <p>Update the PIN used to access this admin panel. Default is <code>1234</code>.</p>
+                            <h3>🔑 Change Password</h3>
+                            <p>Update your account password. Use a strong password of at least 6 characters.</p>
                             <div class="form-group">
-                                <label>Current PIN</label>
-                                <input type="password" id="currentPin" placeholder="Current PIN" maxlength="6"
-                                    inputmode="numeric">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPw" placeholder="Current password">
                             </div>
                             <div class="form-group">
-                                <label>New PIN</label>
-                                <input type="password" id="newPin" placeholder="New PIN (4-6 digits)" maxlength="6"
-                                    inputmode="numeric">
+                                <label>New Password</label>
+                                <input type="password" id="newPw" placeholder="New password (6+ chars)">
                             </div>
                             <div class="form-group">
-                                <label>Confirm New PIN</label>
-                                <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="6"
-                                    inputmode="numeric">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirmPw" placeholder="Confirm new password">
                             </div>
-                            <button class="btn primary" id="changePinBtn">🔑 Update PIN</button>
+                            <button class="btn primary" id="changePwBtn">🔑 Update Password</button>
                         </div>
 
                         <div class="setting-card">
                             <h3>🔄 Reset Data</h3>
-                            <p>Restore all content to the original defaults from <code>data.js</code>. This will
-                                <strong>permanently discard</strong> all edits stored in localStorage.</p>
+                            <p>Restore all content to original defaults from <code>data.js</code>. This will <strong>permanently discard</strong> all edits.</p>
                             <button class="btn danger" id="resetDataBtn" style="margin-bottom:16px">
                                 ⚠️ Reset to Defaults
                             </button>
@@ -321,26 +413,23 @@
                         </div>
 
                         <div class="setting-card">
-                            <h3>ℹ️ About</h3>
-                            <p>This admin panel manages the content served by the V.I.R.A. Virtual Interactive Resource
-                                Assistant at Celtech College Olongapo.</p>
-                            <p style="margin-top:8px">Changes are saved to <strong>localStorage</strong> in your browser
-                                and picked up automatically by the main V.I.R.A. app when opened in the same browser.
-                            </p>
-                            <p style="margin-top:8px; font-size:0.78rem; color: var(--text-muted);">Version 1.0 · Built
-                                March 2026</p>
+                            <h3>🤖 About V.I.R.A. AI</h3>
+                            <p>This AI-powered admin panel manages content for the V.I.R.A. Virtual Interactive Resource Assistant at Celtech College Olongapo.</p>
+                            <div class="ai-info-card">
+                                <div class="ai-info-row"><span>🧠 AI Engine</span><span class="badge badge-type">GPT-4o</span></div>
+                                <div class="ai-info-row"><span>🔒 Auth</span><span class="badge badge-active">Secured</span></div>
+                                <div class="ai-info-row"><span>📦 Storage</span><span class="badge badge-cat">Supabase</span></div>
+                                <div class="ai-info-row"><span>📅 Version</span><span class="badge badge-cat">2.0 · 2026</span></div>
+                            </div>
                         </div>
 
                         <div class="setting-card">
                             <h3>🔗 Quick Links</h3>
                             <p>Open V.I.R.A. pages directly from here.</p>
                             <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-                                <a href="index.html" class="btn" style="text-decoration:none;justify-content:center">🏠
-                                    Main App (index.html)</a>
-                                <a href="navigation.html" class="btn"
-                                    style="text-decoration:none;justify-content:center">🧭 Interactive Maps</a>
-                                <a href="guide.html" class="btn" style="text-decoration:none;justify-content:center">📖
-                                    Guide Page</a>
+                                <a href="index.html" class="btn" style="text-decoration:none;justify-content:center">🏠 Main App</a>
+                                <a href="navigation.html" class="btn" style="text-decoration:none;justify-content:center">🧭 Interactive Maps</a>
+                                <a href="guide.html" class="btn" style="text-decoration:none;justify-content:center">📖 Guide Page</a>
                             </div>
                         </div>
                     </div>
@@ -350,8 +439,22 @@
         </div><!-- /main-wrap -->
     </div><!-- /adminApp -->
 
+    <!-- Backend: Supabase client + data layer -->
+    <script src="supabase-client.js"></script>
+    <script src="db.js"></script>
+    <!-- Hardcoded fallback data -->
     <script src="data.js"></script>
+    <!-- Admin panel logic -->
     <script src="admin.js"></script>
+    <!-- Bootstrap: pre-load Supabase data so adminData is live on start -->
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        await ViraDB.load();
+        // Sync ViraDB cache into localStorage so admin.js loadData() picks it up
+        const cache = ViraDB.getAll();
+        localStorage.setItem('vira_data', JSON.stringify(cache));
+      });
+    </script>
 </body>
 
 </html>

@@ -1,214 +1,286 @@
-# V.I.R.A. System - ERD Diagram (Mermaid Format)
-## Entity Relationship Diagram
+# V.I.R.A. System — ERD Diagram (Mermaid Format)
+## Entity Relationship Diagram — v3.0 (Fully Relational)
 
-This file contains the ERD in Mermaid diagram format.
-You can visualize it at: https://mermaid.live/
+Visualize at: https://mermaid.live/
 
 ```mermaid
 erDiagram
-    EVENTS ||--o{ TTS_USAGE_LOGS : "logged in"
-    HISTORY ||--o{ TTS_USAGE_LOGS : "logged in"
-    FACILITIES ||--o{ TTS_USAGE_LOGS : "logged in"
-    CAMPUS_GUIDE ||--o{ TTS_USAGE_LOGS : "logged in"
-    USER_PREFERENCES ||--o{ SEARCH_LOGS : "performs"
-    USER_PREFERENCES ||--o{ TTS_USAGE_LOGS : "generates"
-    USER_PREFERENCES }o--|| VOICE_SETTINGS : "uses"
-    VOICE_SETTINGS ||--o{ TTS_USAGE_LOGS : "used in"
-    
+
+    %% ── CORE: Department is the root anchor ──────────────────
+    DEPARTMENTS {
+        varchar  id         PK
+        varchar  name
+        varchar  icon
+        text     description
+        varchar  color
+        boolean  is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ── ADMIN USERS ──────────────────────────────────────────
+    ADMIN_USERS {
+        int      id         PK
+        varchar  username   UK
+        varchar  password
+        varchar  name
+        varchar  role
+        varchar  icon
+        varchar  color
+        varchar  dept_id    FK
+        jsonb    pages
+        boolean  is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ── CONTENT TABLES ───────────────────────────────────────
     EVENTS {
-        varchar id PK
-        varchar title
-        text content
-        date event_date
-        varchar category
-        enum priority
-        varchar icon
-        boolean is_active
+        varchar  id         PK
+        varchar  dept_id    FK
+        varchar  title
+        text     content
+        date     event_date
+        varchar  category
+        varchar  priority
+        varchar  icon
+        boolean  is_active
+        int      created_by FK
         timestamp created_at
         timestamp updated_at
     }
-    
+
     HISTORY {
-        varchar id PK
-        varchar title
-        text content
-        date milestone_date
-        varchar category
-        enum priority
-        varchar icon
-        boolean is_active
+        varchar  id         PK
+        varchar  title
+        text     content
+        date     milestone_date
+        varchar  category
+        varchar  priority
+        varchar  icon
+        boolean  is_active
+        int      created_by FK
         timestamp created_at
         timestamp updated_at
     }
-    
+
     FACILITIES {
-        varchar id PK
-        varchar title
-        text content
-        varchar category
-        enum priority
-        varchar icon
-        int capacity
-        varchar operating_hours
-        boolean is_active
+        varchar  id         PK
+        varchar  dept_id    FK
+        varchar  title
+        text     content
+        varchar  category
+        varchar  priority
+        varchar  icon
+        int      capacity
+        varchar  operating_hours
+        boolean  is_active
+        int      created_by FK
         timestamp created_at
         timestamp updated_at
     }
-    
+
     CAMPUS_GUIDE {
-        varchar id PK
-        varchar title
-        text content
-        varchar category
-        enum priority
-        varchar icon
-        int floor_number
-        boolean is_active
+        varchar  id         PK
+        varchar  dept_id    FK
+        varchar  title
+        text     content
+        varchar  category
+        varchar  priority
+        varchar  icon
+        int      floor_number
+        boolean  is_active
+        int      created_by FK
         timestamp created_at
         timestamp updated_at
     }
-    
+
+    %% ── NAVIGATION (linked to guide + facilities) ────────────
     NAVIGATION_DATA {
-        int id PK
-        int floor
-        varchar name
-        enum type
-        text description
-        text keywords
-        int coordinate_x
-        int coordinate_y
-        varchar icon
-        boolean is_active
+        int      id              PK
+        int      floor
+        varchar  campus_guide_id FK
+        varchar  facility_id     FK
+        varchar  name
+        varchar  type
+        text     description
+        text     keywords
+        int      coordinate_x
+        int      coordinate_y
+        varchar  icon
+        boolean  is_active
         timestamp created_at
         timestamp updated_at
     }
-    
+
+    %% ── TAGS (M:N junction) ──────────────────────────────────
+    TAGS {
+        int     id   PK
+        varchar name UK
+        timestamp created_at
+    }
+
+    CONTENT_TAGS {
+        int     id           PK
+        int     tag_id        FK
+        varchar content_type
+        varchar content_id
+        timestamp created_at
+    }
+
+    %% ── USER + VOICE ─────────────────────────────────────────
+    VOICE_SETTINGS {
+        varchar  voice_id      PK
+        varchar  name
+        varchar  lang
+        varchar  gender
+        boolean  local_service
+        boolean  is_active
+        timestamp created_at
+    }
+
     USER_PREFERENCES {
-        varchar user_id PK
-        enum theme
-        varchar voice_id FK
-        decimal speech_rate
-        varchar last_category
-        json search_history
+        varchar  user_id       PK
+        varchar  theme
+        varchar  voice_id      FK
+        decimal  speech_rate
+        varchar  last_category
+        jsonb    search_history
         timestamp created_at
         timestamp updated_at
         timestamp last_login
     }
-    
-    VOICE_SETTINGS {
-        varchar voice_id PK
-        varchar name
-        varchar lang
-        enum gender
-        boolean local_service
-        boolean is_active
-        timestamp created_at
-    }
-    
+
+    %% ── ANALYTICS LOGS ───────────────────────────────────────
     SEARCH_LOGS {
-        int id PK
-        varchar user_id FK
+        int     id            PK
+        varchar user_id       FK
         varchar search_query
-        int results_count
-        enum search_type
+        int     results_count
+        varchar search_type
         timestamp created_at
     }
-    
+
     TTS_USAGE_LOGS {
-        int id PK
-        varchar user_id FK
-        enum content_type
-        varchar content_id FK
-        varchar voice_id FK
+        int     id               PK
+        varchar user_id          FK
+        varchar content_type
+        varchar content_id
+        varchar voice_id         FK
         decimal speech_rate
-        int duration_seconds
+        int     duration_seconds
         timestamp created_at
     }
+
+    %% ── RELATIONSHIPS ────────────────────────────────────────
+
+    %% Department → Admin Users (1:N)
+    DEPARTMENTS      ||--o{ ADMIN_USERS      : "manages"
+
+    %% Department → Content (1:N)
+    DEPARTMENTS      ||--o{ EVENTS           : "owns"
+    DEPARTMENTS      ||--o{ FACILITIES       : "owns"
+    DEPARTMENTS      ||--o{ CAMPUS_GUIDE     : "owns"
+
+    %% Admin Users → Content (1:N) — who created it
+    ADMIN_USERS      ||--o{ EVENTS           : "created"
+    ADMIN_USERS      ||--o{ HISTORY          : "created"
+    ADMIN_USERS      ||--o{ FACILITIES       : "created"
+    ADMIN_USERS      ||--o{ CAMPUS_GUIDE     : "created"
+
+    %% Campus Guide → Navigation Data (1:N)
+    CAMPUS_GUIDE     ||--o{ NAVIGATION_DATA  : "mapped to"
+
+    %% Facilities → Navigation Data (1:N)
+    FACILITIES       ||--o{ NAVIGATION_DATA  : "located at"
+
+    %% Tags M:N via CONTENT_TAGS junction
+    TAGS             ||--o{ CONTENT_TAGS     : "labels"
+
+    %% Voice Settings → User & TTS logs
+    VOICE_SETTINGS   ||--o{ USER_PREFERENCES : "preferred by"
+    VOICE_SETTINGS   ||--o{ TTS_USAGE_LOGS   : "used in"
+
+    %% User → Analytics
+    USER_PREFERENCES ||--o{ SEARCH_LOGS      : "performs"
+    USER_PREFERENCES ||--o{ TTS_USAGE_LOGS   : "generates"
 ```
 
-## Relationship Details
+---
 
-### One-to-Many Relationships
+## Relationship Summary
 
-1. **EVENTS → TTS_USAGE_LOGS** (1:N)
-   - One event can be played multiple times
-   - Each TTS log references one event
+### 🔗 Foreign Key Constraints (Enforced)
 
-2. **HISTORY → TTS_USAGE_LOGS** (1:N)
-   - One history item can be played multiple times
-   - Each TTS log references one history item
+| # | Child Table | FK Column | Parent Table | Parent Column | On Delete |
+|---|-------------|-----------|--------------|---------------|-----------|
+| 1 | `admin_users`    | `dept_id`          | `departments`      | `id`       | SET NULL  |
+| 2 | `events`         | `dept_id`          | `departments`      | `id`       | RESTRICT  |
+| 3 | `events`         | `created_by`       | `admin_users`      | `id`       | SET NULL  |
+| 4 | `history`        | `created_by`       | `admin_users`      | `id`       | SET NULL  |
+| 5 | `facilities`     | `dept_id`          | `departments`      | `id`       | RESTRICT  |
+| 6 | `facilities`     | `created_by`       | `admin_users`      | `id`       | SET NULL  |
+| 7 | `campus_guide`   | `dept_id`          | `departments`      | `id`       | SET NULL  |
+| 8 | `campus_guide`   | `created_by`       | `admin_users`      | `id`       | SET NULL  |
+| 9 | `navigation_data`| `campus_guide_id`  | `campus_guide`     | `id`       | SET NULL  |
+|10 | `navigation_data`| `facility_id`      | `facilities`       | `id`       | SET NULL  |
+|11 | `content_tags`   | `tag_id`           | `tags`             | `id`       | CASCADE   |
+|12 | `user_preferences`| `voice_id`        | `voice_settings`   | `voice_id` | SET NULL  |
+|13 | `search_logs`    | `user_id`          | `user_preferences` | `user_id`  | SET NULL  |
+|14 | `tts_usage_logs` | `user_id`          | `user_preferences` | `user_id`  | SET NULL  |
+|15 | `tts_usage_logs` | `voice_id`         | `voice_settings`   | `voice_id` | SET NULL  |
 
-3. **FACILITIES → TTS_USAGE_LOGS** (1:N)
-   - One facility can be played multiple times
-   - Each TTS log references one facility
+---
 
-4. **CAMPUS_GUIDE → TTS_USAGE_LOGS** (1:N)
-   - One guide item can be played multiple times
-   - Each TTS log references one guide item
+## Relationship Types
 
-5. **USER_PREFERENCES → SEARCH_LOGS** (1:N)
-   - One user can perform multiple searches
-   - Each search log belongs to one user
+| Type | Description | Example |
+|------|-------------|---------|
+| `1:N` (One-to-Many) | One department owns many events | `DEPARTMENTS → EVENTS` |
+| `N:1` (Many-to-One) | Many events belong to one dept | `EVENTS → DEPARTMENTS` |
+| `M:N` (Many-to-Many) | Content can have many tags; tags apply to many content | `CONTENT ↔ TAGS` via `CONTENT_TAGS` |
+| Polymorphic | `content_tags.content_id` references different tables depending on `content_type` | `CONTENT_TAGS → EVENTS \| HISTORY \| FACILITIES \| CAMPUS_GUIDE` |
 
-6. **USER_PREFERENCES → TTS_USAGE_LOGS** (1:N)
-   - One user can generate multiple TTS sessions
-   - Each TTS log belongs to one user
-
-7. **VOICE_SETTINGS → TTS_USAGE_LOGS** (1:N)
-   - One voice can be used in multiple TTS sessions
-   - Each TTS log uses one voice
-
-### Many-to-One Relationships
-
-8. **USER_PREFERENCES → VOICE_SETTINGS** (N:1)
-   - Multiple users can use the same voice
-   - Each user has one active voice preference
-
-## Cardinality Notation
-
-- `||--o{` : One-to-Many (One required, Many optional)
-- `}o--||` : Many-to-One (Many optional, One required)
-- `||--||` : One-to-One (Both required)
-- `}o--o{` : Many-to-Many (Both optional)
+---
 
 ## Database Statistics
 
-- **Total Tables:** 9
-- **Content Tables:** 4 (Events, History, Facilities, Campus Guide)
-- **Navigation Tables:** 1 (Navigation Data)
-- **User Tables:** 2 (User Preferences, Voice Settings)
-- **Log Tables:** 2 (Search Logs, TTS Usage Logs)
-
-## Views Created
-
-1. **active_events** - Shows upcoming active events
-2. **popular_facilities** - Shows facilities by usage count
-3. **navigation_by_floor** - Summarizes locations per floor
-4. **search_analytics** - Shows popular search queries
-
-## Stored Procedures
-
-1. **search_content(search_term)** - Full-text search across all content
-2. **get_floor_navigation(floor_num)** - Get all locations on a floor
-3. **log_tts_usage(...)** - Log TTS playback session
+| Category | Tables | Description |
+|----------|--------|-------------|
+| **Root** | 1 | `departments` |
+| **Auth** | 1 | `admin_users` |
+| **Content** | 4 | `events`, `history`, `facilities`, `campus_guide` |
+| **Navigation** | 1 | `navigation_data` |
+| **Taxonomy** | 2 | `tags`, `content_tags` |
+| **User** | 2 | `user_preferences`, `voice_settings` |
+| **Analytics** | 2 | `search_logs`, `tts_usage_logs` |
+| **Total** | **13** | — |
 
 ---
 
-**How to Visualize:**
-1. Copy the Mermaid code above
-2. Go to https://mermaid.live/
-3. Paste the code
-4. View the interactive diagram
-5. Export as PNG/SVG
+## Views
 
-**Alternative Tools:**
-- VS Code with Mermaid extension
-- GitHub (supports Mermaid in markdown)
-- Draw.io (import Mermaid)
-- PlantUML
+| View | Description |
+|------|-------------|
+| `active_events` | Upcoming events **joined** with department name + creator |
+| `popular_facilities` | Facilities ranked by TTS play count, **joined** with department |
+| `navigation_by_floor` | Floor map summary **joined** with linked guide titles |
+| `search_analytics` | Top searches ranked by frequency + unique user count |
+| `dept_content_summary` | How many events/facilities/guides each department published |
+| `tts_analytics` | TTS play counts per content type and voice used |
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** February 15, 2026  
-**Author:** V.I.R.A. Development Team
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `search_content(text)` | Full-text ILIKE search across all 4 content tables, returns dept info |
+| `get_floor_navigation(int)` | Returns navigation map points for a floor **with guide + facility links** |
+| `get_department_content(dept_id)` | Returns all content (events + facilities + guides) for a department |
+| `log_tts_usage(...)` | Convenience wrapper to insert a TTS analytics record |
+
+---
+
+**Version:** 3.0 — Fully Relational  
+**Updated:** March 24, 2026

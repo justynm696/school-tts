@@ -36,9 +36,10 @@ const elements = {
 function init() {
     loadTheme();
     loadVoices();
-    renderContent(currentCategory);
+    renderIdleState();   // Show welcome screen instead of content
     attachEventListeners();
     initVoiceSearch();
+    animateSearchBar();
 
     // Load voices when they become available
     if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -85,9 +86,193 @@ function loadVoices() {
     }
 }
 
+// ==================== Idle / Welcome State ====================
+function renderIdleState() {
+    // Hide category tabs in idle state
+    const tabs = document.querySelector('.category-tabs');
+    if (tabs) tabs.classList.add('tabs-hidden');
+
+    elements.contentSection.innerHTML = `
+        <div class="idle-screen" id="idleScreen">
+            <div class="idle-ai-orb">
+                <div class="orb-ring"></div>
+                <div class="orb-ring orb-ring-2"></div>
+                <div class="orb-ring orb-ring-3"></div>
+                <div class="orb-icon">🎤</div>
+            </div>
+            <h2 class="idle-title">Ask V.I.R.A. anything</h2>
+            <p class="idle-subtitle">Search or speak a topic to explore Celtech College</p>
+
+            <div class="idle-section-label">Browse by section</div>
+            <div class="idle-chips idle-chips-main">
+                <button class="idle-chip idle-chip-feature" data-query="events" data-category="events">
+                    <span class="chip-icon">📅</span><span>Events</span>
+                </button>
+                <button class="idle-chip idle-chip-feature" data-query="history" data-category="history">
+                    <span class="chip-icon">🏛️</span><span>History</span>
+                </button>
+                <button class="idle-chip idle-chip-feature" data-query="facilities" data-category="facilities">
+                    <span class="chip-icon">🏢</span><span>Facilities</span>
+                </button>
+                <button class="idle-chip idle-chip-feature" data-query="campus guide" data-category="campus_guide">
+                    <span class="chip-icon">🗺️</span><span>Campus Guide</span>
+                </button>
+                <button class="idle-chip idle-chip-feature idle-chip-maps" data-query="interactive maps" data-link="navigation.html">
+                    <span class="chip-icon">🧭</span><span>Interactive Maps</span>
+                </button>
+            </div>
+
+            <div class="idle-section-label">🏢 Office Accounts</div>
+            <div class="idle-chips">
+                <button class="idle-chip idle-chip-office" data-query="registrar">📋 Registrar</button>
+                <button class="idle-chip idle-chip-office" data-query="canteen">🍽️ Canteen</button>
+                <button class="idle-chip idle-chip-office" data-query="it support">💻 IT Support</button>
+                <button class="idle-chip idle-chip-office" data-query="accounting">💰 Accounting</button>
+            </div>
+
+            <div class="idle-section-label">🏗️ Browse by Floor</div>
+            <div class="idle-chips">
+                <button class="idle-chip idle-chip-floor" data-query="1st floor">1️⃣ 1st Floor</button>
+                <button class="idle-chip idle-chip-floor" data-query="2nd floor">2️⃣ 2nd Floor</button>
+                <button class="idle-chip idle-chip-floor" data-query="3rd floor">3️⃣ 3rd Floor</button>
+                <button class="idle-chip idle-chip-floor" data-query="4th floor">4️⃣ 4th Floor</button>
+            </div>
+
+            <div class="idle-section-label">Quick searches</div>
+            <div class="idle-chips">
+                <button class="idle-chip" data-query="science fair">🔬 Science Fair</button>
+                <button class="idle-chip" data-query="library">📚 Library</button>
+                <button class="idle-chip" data-query="clinic">🏥 Clinic</button>
+                <button class="idle-chip" data-query="auditorium">🎭 Auditorium</button>
+                <button class="idle-chip" data-query="computer lab">💻 Computer Lab</button>
+                <button class="idle-chip" data-query="sports">⚽ Sports</button>
+            </div>
+
+            <div class="idle-hint">
+                <span class="idle-hint-icon">💡</span>
+                Try: <em>"Registrar"</em>, <em>"1st Floor"</em>, <em>"Canteen"</em>, or speak into the mic 🎙️
+            </div>
+        </div>
+    `;
+
+    // Wire up quick-search chips
+    document.querySelectorAll('.idle-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            // Handle direct navigation link chips
+            if (chip.dataset.link) {
+                window.location.href = chip.dataset.link;
+                return;
+            }
+            const q = chip.dataset.query;
+            elements.searchInput.value = q;
+            searchQuery = q;
+            handleSearch();
+            elements.searchInput.focus();
+        });
+    });
+}
+
+
+// ==================== Category Match Detection ====================
+// Maps search queries to exact category keys
+const CATEGORY_MAP = {
+    'events':           'events',
+    'event':            'events',
+    'history':          'history',
+    'histories':        'history',
+    'school history':   'history',
+    'campus history':   'history',
+    'facilities':       'facilities',
+    'facility':         'facilities',
+    'campus guide':     'campus_guide',
+    'guide':            'campus_guide',
+    'campus_guide':     'campus_guide',
+};
+
+// ── Office / Floor keyword shortcuts (search-to-reveal) ──────────
+// Maps a typed/spoken phrase to a specific campus_guide item ID
+const ITEM_SHORTCUT_MAP = {
+    // Office accounts
+    'registrar':            'office-registrar',
+    'registrar office':     'office-registrar',
+    'canteen':              'office-canteen',
+    'cafeteria':            'office-canteen',
+    'food':                 'office-canteen',
+    'it support':           'office-it-support',
+    'it':                   'office-it-support',
+    'tech support':         'office-it-support',
+    'technical support':    'office-it-support',
+    'accounting':           'office-accounting',
+    'finance':              'office-accounting',
+    'finance office':       'office-accounting',
+    'accounting office':    'office-accounting',
+    'payment':              'office-accounting',
+    'tuition':              'office-accounting',
+    // Floor directories
+    '1st floor':            'floor-1st',
+    'first floor':          'floor-1st',
+    'ground floor':         'floor-1st',
+    '2nd floor':            'floor-2nd',
+    'second floor':         'floor-2nd',
+    '3rd floor':            'floor-3rd',
+    'third floor':          'floor-3rd',
+    '4th floor':            'floor-4th',
+    'fourth floor':         'floor-4th',
+};
+
+const INTERACTIVE_MAPS_QUERIES = ['interactive maps','interactive map','maps','map','navigation','navigate','floor map','floor plan'];
+
+function detectCategoryQuery(query) {
+    const q = query.trim().toLowerCase();
+    if (CATEGORY_MAP[q]) return { type: 'category', key: CATEGORY_MAP[q] };
+    if (ITEM_SHORTCUT_MAP[q]) return { type: 'item', id: ITEM_SHORTCUT_MAP[q] };
+    if (INTERACTIVE_MAPS_QUERIES.some(k => k === q || q === k)) return { type: 'maps' };
+    return null;
+}
+
+function setActiveTab(categoryKey) {
+    const tabMap = { events:'events', history:'history', facilities:'facilities', campus_guide:'campus_guide' };
+    document.querySelectorAll('.tab-btn[data-category]').forEach(t => t.classList.remove('active'));
+    const target = document.querySelector(`.tab-btn[data-category="${tabMap[categoryKey]}"]`);
+    if (target) target.classList.add('active');
+    currentCategory = categoryKey;
+}
+
 // ==================== Content Rendering ====================
 function renderContent(category) {
     elements.contentSection.innerHTML = '';
+
+    // Show tabs when searching
+    const tabs = document.querySelector('.category-tabs');
+    if (searchQuery.trim()) {
+        if (tabs) tabs.classList.remove('tabs-hidden');
+    } else {
+        if (tabs) tabs.classList.add('tabs-hidden');
+        renderIdleState();
+        return;
+    }
+
+    const query = searchQuery.trim().toLowerCase();
+
+    // ── CATEGORY-NAME SHORTCUT ──────────────────────────────────────
+    const detected = detectCategoryQuery(query);
+
+    if (detected && detected.type === 'maps') {
+        // Show the Interactive Maps special card only
+        renderInteractiveMapsResult();
+        return;
+    }
+
+    if (detected && detected.type === 'category') {
+        renderFullCategory(detected.key);
+        return;
+    }
+
+    if (detected && detected.type === 'item') {
+        renderSingleItem(detected.id);
+        return;
+    }
+    // ────────────────────────────────────────────────────────────────
 
     let filteredData = [];
     let specialPages = [];
@@ -254,37 +439,131 @@ function renderContent(category) {
         }));
     }
 
-    const totalResults = filteredData.length + specialPages.length;
+    renderResultsList(filteredData, specialPages);
+}
 
-    if (totalResults === 0) {
-        const message = searchQuery.trim()
-            ? `No results found for "${searchQuery}"`
-            : `No ${category} available at the moment.`;
-        elements.contentSection.innerHTML = `
-            <div style="text-align: center; padding: 3rem; color: var(--color-text-tertiary);">
-                <p style="font-size: 1.125rem;">${message}</p>
-            </div>
-        `;
+// ── Show a single campus_guide item by ID (office/floor shortcut) ──
+function renderSingleItem(itemId) {
+    // Search all categories for the item
+    let foundItem = null;
+    Object.keys(viRAData).forEach(key => {
+        const hit = viRAData[key].find(i => i.id === itemId);
+        if (hit) foundItem = { ...hit, sourceCategory: key };
+    });
+
+    if (!foundItem) {
+        // Fallback to regular search if not found
+        renderContent(currentCategory);
         return;
     }
 
-    // Show search results count if searching
-    if (searchQuery.trim()) {
-        const resultsHeader = document.createElement('div');
-        resultsHeader.style.cssText = 'padding: 1rem 0; color: var(--color-text-secondary); font-size: 0.95rem;';
-        resultsHeader.innerHTML = `<strong>${totalResults}</strong> result${totalResults !== 1 ? 's' : ''} found for "<strong>${searchQuery}</strong>"`;
-        elements.contentSection.appendChild(resultsHeader);
+    // Highlight corresponding tab
+    setActiveTab('campus_guide');
+
+    // Build icon labels for the category
+    const isOffice = foundItem.category === 'Office Account';
+    const isFloor  = ['1st Floor','2nd Floor','3rd Floor','4th Floor'].includes(foundItem.category);
+    const bannerIcon = isOffice ? '🏢' : (isFloor ? '🏗️' : '📄');
+    const bannerLabel = isOffice ? `<strong>Office Account</strong> &mdash; ${foundItem.title}` :
+                         isFloor ? `<strong>Floor Directory</strong> &mdash; ${foundItem.title}` :
+                                   `<strong>${foundItem.title}</strong>`;
+
+    const banner = document.createElement('div');
+    banner.className = 'search-results-banner category-full-banner';
+    banner.innerHTML = `<span>${bannerIcon}</span><span>${bannerLabel}</span>`;
+    elements.contentSection.appendChild(banner);
+
+    elements.contentSection.appendChild(createContentCard(foundItem, 0));
+}
+
+// ── Show ALL items in a named category ──────────────────────────
+function renderFullCategory(categoryKey) {
+    setActiveTab(categoryKey);
+    const categoryLabels = {
+        events: 'Events', history: 'History',
+        facilities: 'Facilities', campus_guide: 'Campus Guide'
+    };
+    const categoryIcons = { events:'📅', history:'🏛️', facilities:'🏢', campus_guide:'🗺️' };
+    const label = categoryLabels[categoryKey] || categoryKey;
+    const icon  = categoryIcons[categoryKey] || '📄';
+    const items = (viRAData[categoryKey] || []).map(item => ({ ...item, sourceCategory: categoryKey }));
+
+    // Category header banner
+    const banner = document.createElement('div');
+    banner.className = 'search-results-banner category-full-banner';
+    banner.innerHTML = `
+        <span>${icon}</span>
+        <span>Showing all <strong>${items.length}</strong> ${label} item${items.length !== 1 ? 's' : ''}</span>
+    `;
+    elements.contentSection.appendChild(banner);
+
+    if (!items.length) {
+        elements.contentSection.innerHTML += `
+            <div style="text-align:center;padding:3rem;color:var(--color-text-tertiary)">
+                <p style="font-size:1.1rem">No ${label} entries yet.</p>
+            </div>`;
+        return;
+    }
+    items.forEach((item, i) => {
+        elements.contentSection.appendChild(createContentCard(item, i));
+    });
+}
+
+// ── Show Interactive Maps result card ───────────────────────────
+function renderInteractiveMapsResult() {
+    // Deselect all tabs, highlight the maps link
+    document.querySelectorAll('.tab-btn[data-category]').forEach(t => t.classList.remove('active'));
+    const mapsTab = document.querySelector('.tab-btn.external-link');
+    if (mapsTab) mapsTab.classList.add('active');
+
+    const banner = document.createElement('div');
+    banner.className = 'search-results-banner';
+    banner.innerHTML = `<span>🧭</span><span>Showing <strong>Interactive Maps</strong></span>`;
+    elements.contentSection.appendChild(banner);
+
+    const card = createSpecialPageCard({
+        id: 'interactive-maps',
+        title: 'Interactive Campus Maps',
+        content: 'Navigate through Celtech College Olongapo with our interactive floor-by-floor maps. Find classrooms, offices, labs, and facilities easily. Tap below to open the full map.',
+        category: 'Navigation',
+        icon: '🗺️',
+        priority: 'high',
+        date: new Date().toISOString(),
+        isSpecialPage: true,
+        link: 'navigation.html',
+        keywords: []
+    }, 0);
+    elements.contentSection.appendChild(card);
+}
+
+// ── Shared renderer for regular mixed search results ─────────────
+function renderResultsList(filteredData, specialPages) {
+    const totalResults = filteredData.length + specialPages.length;
+
+    if (totalResults === 0) {
+        elements.contentSection.innerHTML = `
+            <div style="text-align:center;padding:3rem;color:var(--color-text-tertiary)">
+                <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
+                <p style="font-size:1.1rem">No results found for "<strong>${searchQuery}</strong>"</p>
+                <p style="font-size:0.9rem;margin-top:0.5rem">Try: Events, History, Facilities, Campus Guide, or Interactive Maps</p>
+            </div>`;
+        return;
     }
 
-    // Render special pages first
-    specialPages.forEach((item, index) => {
-        const card = createSpecialPageCard(item, index);
-        elements.contentSection.appendChild(card);
-    });
+    // Results count banner
+    const resultsHeader = document.createElement('div');
+    resultsHeader.className = 'search-results-banner';
+    resultsHeader.innerHTML = `
+        <span>🔍</span>
+        <span><strong>${totalResults}</strong> result${totalResults !== 1 ? 's' : ''} found for "<strong>${searchQuery}</strong>"</span>
+    `;
+    elements.contentSection.appendChild(resultsHeader);
 
-    // Then render regular content
-    filteredData.forEach((item, index) => {
-        const card = item.isLocation ? createLocationCard(item, index + specialPages.length) : createContentCard(item, index + specialPages.length);
+    specialPages.forEach((item, i) => elements.contentSection.appendChild(createSpecialPageCard(item, i)));
+    filteredData.forEach((item, i) => {
+        const card = item.isLocation
+            ? createLocationCard(item, i + specialPages.length)
+            : createContentCard(item, i + specialPages.length);
         elements.contentSection.appendChild(card);
     });
 }
@@ -538,8 +817,10 @@ function playText() {
     currentUtterance.volume = 1;
 
     // Event handlers
+    let _ttsStartTime = 0;
     currentUtterance.onstart = () => {
         isPlaying = true;
+        _ttsStartTime = Date.now();
         elements.playBtn.classList.add('playing');
         animateProgress();
     };
@@ -548,6 +829,18 @@ function playText() {
         isPlaying = false;
         elements.playBtn.classList.remove('playing');
         elements.progressFill.style.width = '0%';
+
+        // Log TTS usage to Supabase
+        if (window.ViraDB && currentTitle) {
+            const duration = Math.round((Date.now() - _ttsStartTime) / 1000);
+            const voiceEl  = elements.voiceSelector;
+            const voiceName = voices[voiceEl?.value]?.name || null;
+            const rate      = parseFloat(elements.speedSlider?.value || '1.0');
+            // Derive content type from active tab
+            const activeTab = document.querySelector('.tab-btn.active[data-category]');
+            const contentType = activeTab ? activeTab.dataset.category.replace('campus_guide','campus_guide') : 'event';
+            ViraDB.logTTS(contentType, 'tts-' + Date.now(), voiceName, rate, duration);
+        }
     };
 
     currentUtterance.onerror = (event) => {
@@ -699,12 +992,23 @@ function showVoiceFeedback(message) {
 function handleSearch() {
     renderContent(currentCategory);
     updateClearButton();
+    updateSearchBarState();
+
+    // Log search analytics to Supabase (debounced to avoid logging every keystroke)
+    if (window.ViraDB && searchQuery.trim().length >= 3) {
+        clearTimeout(window._searchLogTimer);
+        window._searchLogTimer = setTimeout(() => {
+            const resultCount = document.querySelectorAll('.content-card').length;
+            ViraDB.logSearch(searchQuery.trim(), resultCount, isListening ? 'voice' : 'text');
+        }, 1500);
+    }
 }
 
 function clearSearch() {
     searchQuery = '';
     elements.searchInput.value = '';
     handleSearch();
+    elements.searchInput.focus();
 }
 
 function updateClearButton() {
@@ -713,6 +1017,26 @@ function updateClearButton() {
     } else {
         elements.clearSearchBtn.classList.remove('visible');
     }
+}
+
+function updateSearchBarState() {
+    const bar = document.querySelector('.search-bar');
+    if (!bar) return;
+    if (searchQuery.trim()) {
+        bar.classList.add('search-active');
+    } else {
+        bar.classList.remove('search-active');
+    }
+}
+
+function animateSearchBar() {
+    // Pulse the search bar once on load to draw attention
+    const bar = document.querySelector('.search-bar');
+    if (!bar) return;
+    setTimeout(() => {
+        bar.classList.add('search-pulse');
+        setTimeout(() => bar.classList.remove('search-pulse'), 1800);
+    }, 600);
 }
 
 // ==================== Event Listeners ====================

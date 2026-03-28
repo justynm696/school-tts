@@ -1,19 +1,23 @@
 // V.I.R.A. Service Worker - PWA Offline Support
-const CACHE_NAME = 'vira-celtech-v1.0.0';
+const CACHE_NAME = 'vira-celtech-v2.0.0';
 const urlsToCache = [
     './',
     './index.html',
     './navigation.html',
+    './admin.html',
+    './guide.html',
     './styles.css',
+    './admin.css',
     './app.js',
     './data.js',
+    './db.js',
+    './supabase-client.js',
     './navigation.js',
     './celtech_logo.png',
     './floor_1st.jpg',
     './floor_2nd.jpg',
     './floor_3rd.jpg',
     './floor_4th.jpg',
-    './guide.html',
     './manifest.json'
 ];
 
