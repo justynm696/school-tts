@@ -1228,29 +1228,29 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* AI Orb */
+/* AI Orb — now shows V.I.R.A. logo image */
 .idle-ai-orb {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     margin-bottom: 2rem;
 }
 .orb-ring {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 2px solid rgba(30, 77, 139, 0.3);
+    border: 2px solid rgba(245, 166, 35, 0.45);
     animation: orbPulse 2.4s ease-in-out infinite;
 }
 .orb-ring-2 {
-    inset: -14px;
-    border-color: rgba(245, 166, 35, 0.22);
+    inset: -16px;
+    border-color: rgba(255, 255, 255, 0.20);
     animation-delay: 0.5s;
     animation-duration: 2.8s;
 }
 .orb-ring-3 {
-    inset: -28px;
-    border-color: rgba(45, 122, 62, 0.15);
+    inset: -32px;
+    border-color: rgba(245, 166, 35, 0.10);
     animation-delay: 1s;
     animation-duration: 3.2s;
 }
@@ -1264,29 +1264,38 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.8rem;
-    background: var(--gradient-primary);
+    background: white;
     border-radius: 50%;
-    box-shadow: 0 8px 32px rgba(30, 77, 139, 0.3), 0 0 0 4px rgba(30, 77, 139, 0.08);
+    box-shadow: 0 8px 32px rgba(30, 77, 139, 0.4), 0 0 0 4px rgba(245, 166, 35, 0.5);
+    overflow: hidden;
     animation: orbFloat 3s ease-in-out infinite;
+}
+/* V.I.R.A. logo image inside the orb */
+.orb-icon img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
 }
 @keyframes orbFloat {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
 }
 
+
 /* Idle Text */
 .idle-title {
     font-family: var(--font-display);
     font-size: 2rem;
     font-weight: 800;
-    color: var(--color-text-primary);
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
     margin-bottom: 0.6rem;
     letter-spacing: -0.02em;
 }
 .idle-subtitle {
     font-size: 0.98rem;
-    color: var(--color-text-secondary);
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.4);
     line-height: 1.7;
     max-width: 380px;
     margin-bottom: 2rem;
@@ -1302,17 +1311,19 @@ body {
     margin-bottom: 2rem;
 }
 .idle-chip {
-    background: var(--color-bg-card);
-    border: 1.5px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.80);
+    border: 1.5px solid rgba(255,255,255,0.6);
     border-radius: var(--radius-full);
     padding: 0.45rem 1rem;
     font-size: 0.84rem;
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
     cursor: pointer;
     transition: all var(--transition-base);
     font-family: var(--font-primary);
     white-space: nowrap;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 .idle-chip:hover {
     background: var(--gradient-primary);
@@ -1331,13 +1342,15 @@ body {
     align-items: center;
     gap: 0.4rem;
     font-size: 0.82rem;
-    color: var(--color-text-tertiary);
-    background: var(--color-bg-secondary);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.15);
     padding: 0.6rem 1.2rem;
     border-radius: var(--radius-full);
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
-.idle-hint em { font-style: italic; color: var(--color-primary); }
+.idle-hint em { font-style: italic; color: #FFD166; }
 .idle-hint-icon { font-size: 1rem; }
 
 /* Dark mode idle adjustments */
@@ -1410,7 +1423,8 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--color-text-tertiary);
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
     margin-bottom: 0.75rem;
     margin-top: 0.5rem;
 }

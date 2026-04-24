@@ -98,7 +98,7 @@ function renderIdleState() {
                 <div class="orb-ring"></div>
                 <div class="orb-ring orb-ring-2"></div>
                 <div class="orb-ring orb-ring-3"></div>
-                <div class="orb-icon">🎤</div>
+                <div class="orb-icon"><img src="vira_logo.png" alt="V.I.R.A."></div>
             </div>
             <h2 class="idle-title">Ask V.I.R.A. anything</h2>
             <p class="idle-subtitle">Search or speak a topic to explore Celtech College</p>
