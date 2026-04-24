@@ -107,11 +107,32 @@ html {
 
 body {
     font-family: var(--font-primary);
-    background: var(--color-bg-primary);
+    background-color: var(--color-bg-primary);
+    /* Celtech College building background */
+    background-image:
+        linear-gradient(to bottom,
+            rgba(15, 58, 111, 0.65) 0%,
+            rgba(20, 65, 120, 0.55) 40%,
+            rgba(15, 50, 100, 0.70) 70%,
+            rgba(10, 35, 80, 0.80) 100%),
+        url('celtech_building.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-text-primary);
     line-height: 1.6;
     overflow-x: hidden;
-    transition: background var(--transition-base), color var(--transition-base);
+    transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+[data-theme="dark"] body {
+    background-image:
+        linear-gradient(to bottom,
+            rgba(5, 15, 35, 0.88) 0%,
+            rgba(8, 22, 52, 0.85) 50%,
+            rgba(5, 10, 28, 0.92) 100%),
+        url('celtech_building.jpg');
 }
 
 /* ==================== App Container ==================== */
@@ -121,17 +142,19 @@ body {
     flex-direction: column;
     max-width: 100%;
     margin: 0 auto;
+    background: transparent;
 }
 
 /* ==================== Header ==================== */
 .header {
-    background: var(--gradient-card);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--color-border);
+    background: rgba(15, 58, 111, 0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
     transition: all var(--transition-base);
 }
 
@@ -173,15 +196,30 @@ body {
     font-family: var(--font-display);
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--color-text-primary);
+    color: #ffffff;
     letter-spacing: -0.02em;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.4);
 }
 
 .logo-text .accent {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, #F5A623 0%, #FFD166 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+/* V.I.R.A. second logo image */
+.vira-logo-img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 3px;
+    box-shadow: var(--shadow-md);
+    border: 2px solid rgba(245, 166, 35, 0.8);
+    animation: float 3s ease-in-out infinite;
+    animation-delay: 0.5s;
 }
 
 .theme-toggle {
@@ -243,6 +281,17 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    /* subtle background so content is legible over building photo */
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .main-content {
+    background: rgba(0, 0, 0, 0.12);
 }
 
 /* ==================== Voice Search Bar ==================== */
@@ -254,12 +303,19 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    background: var(--color-bg-card);
-    border: 2px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid rgba(255, 255, 255, 0.6);
     border-radius: var(--radius-xl);
     padding: var(--spacing-sm) var(--spacing-lg);
     transition: all var(--transition-base);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-sm), 0 2px 16px rgba(30, 77, 139, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .search-bar {
+    background: rgba(20, 35, 65, 0.80);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .search-bar:focus-within {
@@ -428,8 +484,8 @@ body {
 }
 
 .tab-btn {
-    background: var(--gradient-card);
-    border: 2px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.75);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: var(--radius-lg);
     padding: var(--spacing-md);
     cursor: pointer;
@@ -440,6 +496,14 @@ body {
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(15, 58, 111, 0.10);
+}
+
+[data-theme="dark"] .tab-btn {
+    background: rgba(15, 30, 60, 0.70);
+    border-color: rgba(255, 255, 255, 0.10);
 }
 
 .tab-btn::before {
@@ -508,14 +572,22 @@ body {
 }
 
 .content-card {
-    background: var(--gradient-card);
-    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     cursor: pointer;
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(15, 58, 111, 0.12);
+}
+
+[data-theme="dark"] .content-card {
+    background: rgba(15, 30, 60, 0.78);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .content-card::before {
@@ -668,9 +740,11 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--color-bg-elevated);
-    border-top: 1px solid var(--color-border);
-    box-shadow: var(--shadow-xl);
+    background: rgba(15, 45, 100, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.35);
     transform: translateY(100%);
     transition: transform var(--transition-slow);
     z-index: 200;

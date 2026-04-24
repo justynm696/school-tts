@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyFlow — Smart Reminder & Learning Assistant</title>
+<meta name="description" content="AI-powered smart reminders, flashcards, Pomodoro timer, notes, and quiz tools for students">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ AUTH OVERLAY ══ -->
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-logo">🧠</div>
+      <h1>StudyFlow</h1>
+      <p>Smart Reminder &amp; Learning Assistant</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="showTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="showTab('register')">Create Account</button>
+    </div>
+    <!-- LOGIN -->
+    <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+      <div class="auth-field"><label>Username</label>
+        <div class="auth-input-wrap"><span>👤</span><input type="text" id="lgUser" placeholder="Username" required></div>
+      </div>
+      <div class="auth-field"><label>Password</label>
+        <div class="auth-input-wrap"><span>🔒</span><input type="password" id="lgPass" placeholder="Password" required>
+          <button type="button" onclick="togglePw('lgPass',this)">👁</button></div>
+      </div>
+      <div class="auth-error" id="lgErr"></div>
+      <button type="submit" class="auth-submit">Sign In →</button>
+      <p class="auth-hint">💡 Demo: <code>demo</code> / <code>demo123</code></p>
+    </form>
+    <!-- REGISTER -->
+    <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
+      <div class="form-row-2">
+        <div class="auth-field"><label>Full Name *</label><input type="text" id="rgName" placeholder="Your name" required></div>
+        <div class="auth-field"><label>Username *</label><input type="text" id="rgUser" placeholder="username" required></div>
+      </div>
+      <div class="auth-field"><label>Email</label><input type="email" id="rgEmail" placeholder="your@email.com"></div>
+      <div class="form-row-2">
+        <div class="auth-field"><label>Password *</label><input type="password" id="rgPass" placeholder="Min. 6 chars" required></div>
+        <div class="auth-field"><label>Confirm *</label><input type="password" id="rgConf" placeholder="Repeat password" required></div>
+      </div>
+      <div class="auth-field"><label>Grade / Level</label>
+        <select id="rgGrade">
+          <option value="9th">9th Grade</option><option value="10th">10th Grade</option>
+          <option value="11th" selected>11th Grade</option><option value="12th">12th Grade</option>
+          <option value="col1">College 1st Year</option><option value="col2">College 2nd Year</option>
+          <option value="col3">College 3rd Year</option><option value="col4">College 4th Year</option>
+          <option value="grad">Graduate</option><option value="other">Other</option>
+        </select>
+      </div>
+      <div class="auth-field"><label>Avatar Color</label>
+        <div class="color-row" id="avatarPicker">
+          <div class="c-dot sel" data-c="#7c3aed" style="background:#7c3aed" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#3b82f6" style="background:#3b82f6" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#10b981" style="background:#10b981" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#f59e0b" style="background:#f59e0b" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#ef4444" style="background:#ef4444" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#ec4899" style="background:#ec4899" onclick="pickAvatarColor(this)"></div>
+          <div class="c-dot" data-c="#06b6d4" style="background:#06b6d4" onclick="pickAvatarColor(this)"></div>
+        </div>
+      </div>
+      <div class="auth-error" id="rgErr"></div>
+      <button type="submit" class="auth-submit">Create Account ✨</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand"><span class="sb-logo">🧠</span><div><div class="sb-name">StudyFlow</div><div class="sb-tag">Learning Assistant</div></div></div>
+    <div class="sb-user" id="sbUser"></div>
+    <nav class="sb-nav">
+      <div class="nav-label">MAIN</div>
+      <button class="nav-item active" id="nav-dashboard" onclick="goTo('dashboard')"><span>🏠</span> Dashboard</button>
+      <button class="nav-item" id="nav-reminders" onclick="goTo('reminders')"><span>🔔</span> Reminders <span class="nav-badge" id="badge-overdue"></span></button>
+      <div class="nav-label">STUDY TOOLS</div>
+      <button class="nav-item" id="nav-flashcards" onclick="goTo('flashcards')"><span>🃏</span> Flashcards <span class="nav-badge" id="badge-due"></span></button>
+      <button class="nav-item" id="nav-notes" onclick="goTo('notes')"><span>📝</span> Notes</button>
+      <button class="nav-item" id="nav-pomodoro" onclick="goTo('pomodoro')"><span>⏱️</span> Pomodoro</button>
+      <button class="nav-item" id="nav-quiz" onclick="goTo('quiz')"><span>🧠</span> Quiz</button>
+      <div class="nav-label">INSIGHTS</div>
+      <button class="nav-item" id="nav-analytics" onclick="goTo('analytics')"><span>📊</span> Analytics</button>
+      <button class="nav-item" id="nav-ai" onclick="goTo('ai')"><span>🤖</span> AI Assistant</button>
+    </nav>
+    <div class="sb-footer">
+      <button class="nav-item" id="nav-settings" onclick="goTo('settings')"><span>⚙️</span> Settings</button>
+      <button class="nav-item nav-danger" onclick="handleLogout()"><span>🚪</span> Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-wrap">
+    <header class="topbar">
+      <button class="ham-btn" onclick="toggleSidebar()">☰</button>
+      <div><div class="tb-title" id="tbTitle">Dashboard</div><div class="tb-sub" id="tbDate"></div></div>
+      <div class="tb-right">
+        <div class="streak-pill" id="streakPill">🔥 <span id="streakNum">0</span> day streak</div>
+        <button class="quick-add-btn" onclick="openReminderModal(null)">＋ Reminder</button>
+        <div class="tb-avatar" id="tbAvatar"></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div id="welcomeBanner" class="welcome-banner"></div>
+        <div id="statsRow" class="stats-row"></div>
+        <div class="dash-grid">
+          <div class="dash-card"><div class="dash-card-title">🔔 Upcoming Reminders</div><div id="dashReminders"></div></div>
+          <div class="dash-card"><div class="dash-card-title">🃏 Cards Due Today</div><div id="dashCards"></div></div>
+          <div class="dash-card"><div class="dash-card-title">⏱️ Study Tip of the Day</div><div id="dashTip" class="tip-box"></div></div>
+          <div class="dash-card"><div class="dash-card-title">📈 Progress Overview</div><div id="dashProgress"></div></div>
+        </div>
+      </section>
+
+      <!-- REMINDERS -->
+      <section class="page" id="page-reminders">
+        <div class="sec-header">
+          <h2>🔔 Reminders</h2>
+          <div class="sec-tools">
+            <input type="text" class="srch" id="srch-rem" placeholder="Search…" oninput="renderReminders()">
+            <select id="flt-cat" onchange="renderReminders()">
+              <option value="">All Categories</option><option value="study">📚 Study</option>
+              <option value="assignment">📄 Assignment</option><option value="exam">📝 Exam</option>
+              <option value="personal">👤 Personal</option><option value="health">❤️ Health</option><option value="other">📌 Other</option>
+            </select>
+            <select id="flt-status" onchange="renderReminders()">
+              <option value="pending">Pending</option><option value="completed">Completed</option><option value="all">All</option>
+            </select>
+            <button class="btn-primary" onclick="openReminderModal(null)">＋ Add</button>
+          </div>
+        </div>
+        <div id="remindersList" class="reminders-list"></div>
+      </section>
+
+      <!-- FLASHCARDS -->
+      <section class="page" id="page-flashcards">
+        <div class="sec-header">
+          <h2>🃏 Flashcard Decks</h2>
+          <div class="sec-tools">
+            <input type="text" class="srch" id="srch-decks" placeholder="Search decks…" oninput="renderDecks()">
+            <button class="btn-primary" onclick="openDeckModal(null)">＋ New Deck</button>
+          </div>
+        </div>
+        <div id="decksGrid" class="decks-grid"></div>
+      </section>
+
+      <!-- NOTES -->
+      <section class="page" id="page-notes">
+        <div class="sec-header">
+          <h2>📝 Notes</h2>
+          <div class="sec-tools">
+            <input type="text" class="srch" id="srch-notes" placeholder="Search notes…" oninput="renderNotes()">
+            <button class="btn-primary" onclick="openNoteModal(null)">＋ New Note</button>
+          </div>
+        </div>
+        <div id="notesGrid" class="notes-grid"></div>
+      </section>
+
+      <!-- POMODORO -->
+      <section class="page" id="page-pomodoro">
+        <div class="pom-layout">
+          <div class="pom-main">
+            <div class="pom-mode-row">
+              <button class="pom-tab active" id="ptab-work" onclick="setPomMode('work')">🎯 Focus</button>
+              <button class="pom-tab" id="ptab-short" onclick="setPomMode('short')">☕ Short Break</button>
+              <button class="pom-tab" id="ptab-long" onclick="setPomMode('long')">🛌 Long Break</button>
+            </div>
+            <div class="pom-ring-wrap">
+              <svg viewBox="0 0 240 240" class="pom-svg">
+                <circle class="pom-track" cx="120" cy="120" r="104"/>
+                <circle class="pom-fill" id="pomFill" cx="120" cy="120" r="104"/>
+              </svg>
+              <div class="pom-center">
+                <div class="pom-time" id="pomTime">25:00</div>
+                <div class="pom-label" id="pomLabel">Focus Time</div>
+              </div>
+            </div>
+            <div class="pom-controls">
+              <button class="pom-ctrl" onclick="resetPom()" title="Reset">↺</button>
+              <button class="pom-play" id="pomPlay" onclick="togglePom()">▶ Start</button>
+              <button class="pom-ctrl" onclick="skipPom()" title="Skip">⏭</button>
+            </div>
+            <div class="pom-dots" id="pomDots"></div>
+            <input type="text" class="pom-task-input" id="pomTask" placeholder="What are you working on?">
+          </div>
+          <div class="pom-side">
+            <div class="pom-stat"><div class="pom-stat-v" id="pomSessToday">0</div><div class="pom-stat-l">Sessions Today</div></div>
+            <div class="pom-stat"><div class="pom-stat-v" id="pomMinsToday">0</div><div class="pom-stat-l">Minutes Focused</div></div>
+            <div class="pom-stat"><div class="pom-stat-v" id="pomSessTotal">0</div><div class="pom-stat-l">Total Sessions</div></div>
+            <div class="pom-history-label">Recent Sessions</div>
+            <div id="pomHistory" class="pom-history"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section class="page" id="page-quiz">
+        <div class="sec-header"><h2>🧠 Quiz Mode</h2></div>
+        <div id="quizSetup"></div>
+        <div id="quizActive" class="hidden"></div>
+        <div id="quizResults" class="hidden"></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="page" id="page-analytics">
+        <div class="sec-header"><h2>📊 Analytics &amp; Progress</h2></div>
+        <div class="analytics-grid">
+          <div class="an-card span-2"><h3>📅 Study Activity</h3><div id="heatmap" class="heatmap"></div>
+            <div class="heatmap-legend"><span>Less</span><div class="hm-c l0"></div><div class="hm-c l1"></div><div class="hm-c l2"></div><div class="hm-c l3"></div><div class="hm-c l4"></div><span>More</span></div>
+          </div>
+          <div class="an-card"><h3>🔔 Reminder Stats</h3><div id="anReminders"></div></div>
+          <div class="an-card"><h3>🃏 Flashcard Progress</h3><div id="anFlashcards"></div></div>
+          <div class="an-card"><h3>⏱️ Study Time</h3><div id="anPomodoro"></div></div>
+          <div class="an-card"><h3>🧠 Quiz Scores</h3><div id="anQuiz"></div></div>
+        </div>
+      </section>
+
+      <!-- AI ASSISTANT -->
+      <section class="page" id="page-ai">
+        <div class="ai-wrap">
+          <div class="ai-head">
+            <div class="ai-avatar">🤖</div>
+            <div><div class="ai-name">StudyBot</div><div class="ai-status">● Online — Ask me anything!</div></div>
+            <button class="btn-ghost" onclick="clearChat()">Clear</button>
+          </div>
+          <div class="ai-msgs" id="aiMsgs"></div>
+          <div class="ai-chips" id="aiChips">
+            <button onclick="sendMsg('Give me study tips')">💡 Study Tips</button>
+            <button onclick="sendMsg('Explain spaced repetition')">🃏 Spaced Repetition</button>
+            <button onclick="sendMsg('Pomodoro technique')">⏱️ Pomodoro</button>
+            <button onclick="sendMsg('How to take better notes')">📝 Note Taking</button>
+            <button onclick="sendMsg('Exam preparation tips')">📋 Exam Prep</button>
+            <button onclick="sendMsg('Motivate me to study!')">🔥 Motivate Me</button>
+          </div>
+          <div class="ai-input-row">
+            <input class="ai-input" id="aiInput" placeholder="Ask about studying, subjects, memory techniques…" onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="ai-send" onclick="sendMsg()">↑</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="sec-header"><h2>⚙️ Settings</h2></div>
+        <div class="settings-grid">
+          <div class="set-card">
+            <h3>👤 Profile</h3>
+            <div id="setAvatarRow" class="set-avatar-row"></div>
+            <div class="set-field"><label>Full Name</label><input type="text" id="set-name"></div>
+            <div class="set-field"><label>Email</label><input type="email" id="set-email"></div>
+            <div class="set-field"><label>Grade / Level</label>
+              <select id="set-grade">
+                <option value="9th">9th Grade</option><option value="10th">10th Grade</option>
+                <option value="11th">11th Grade</option><option value="12th">12th Grade</option>
+                <option value="col1">College 1st Year</option><option value="col2">College 2nd Year</option>
+                <option value="col3">College 3rd Year</option><option value="col4">College 4th Year</option>
+                <option value="grad">Graduate</option><option value="other">Other</option>
+              </select>
+            </div>
+            <div class="set-field"><label>Avatar Color</label>
+              <div class="color-row" id="setColorPicker">
+                <div class="c-dot" data-c="#7c3aed" style="background:#7c3aed" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#3b82f6" style="background:#3b82f6" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#10b981" style="background:#10b981" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#f59e0b" style="background:#f59e0b" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#ef4444" style="background:#ef4444" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#ec4899" style="background:#ec4899" onclick="pickSettingColor(this)"></div>
+                <div class="c-dot" data-c="#06b6d4" style="background:#06b6d4" onclick="pickSettingColor(this)"></div>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+          </div>
+          <div class="set-card">
+            <h3>🔒 Change Password</h3>
+            <div class="set-field"><label>Current Password</label><input type="password" id="set-curpw"></div>
+            <div class="set-field"><label>New Password</label><input type="password" id="set-newpw"></div>
+            <div class="set-field"><label>Confirm</label><input type="password" id="set-confpw"></div>
+            <button class="btn-primary" onclick="changePassword()">🔑 Update Password</button>
+          </div>
+          <div class="set-card">
+            <h3>⏱️ Pomodoro Settings</h3>
+            <div class="set-field"><label>Focus (minutes)</label><input type="number" id="set-work" min="5" max="60" value="25"></div>
+            <div class="set-field"><label>Short Break (minutes)</label><input type="number" id="set-short" min="1" max="30" value="5"></div>
+            <div class="set-field"><label>Long Break (minutes)</label><input type="number" id="set-long" min="5" max="60" value="15"></div>
+            <button class="btn-primary" onclick="savePomSettings()">💾 Save Settings</button>
+          </div>
+          <div class="set-card">
+            <h3>📦 Data</h3>
+            <p class="set-desc">Export, import, or clear your StudyFlow data.</p>
+            <button class="btn-secondary" onclick="exportData()">📤 Export JSON</button>
+            <label class="btn-secondary" style="cursor:pointer;margin-top:8px">📥 Import JSON <input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+            <button class="btn-danger" style="margin-top:16px" onclick="confirmClear()">🗑️ Clear All Data</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- ══ MODALS ══ -->
+<!-- Reminder Modal -->
+<div class="modal-overlay hidden" id="reminderModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="remModalTitle">Add Reminder</h3><button class="m-close" onclick="closeModal('reminderModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div class="mf"><label>Title *</label><input type="text" id="rem-title" placeholder="What do you need to do?"></div>
+        <div class="mf"><label>Category</label>
+          <select id="rem-cat"><option value="study">📚 Study</option><option value="assignment">📄 Assignment</option>
+            <option value="exam">📝 Exam</option><option value="personal">👤 Personal</option>
+            <option value="health">❤️ Health</option><option value="other">📌 Other</option></select>
+        </div>
+      </div>
+      <div class="mf"><label>Description</label><textarea id="rem-desc" rows="2" placeholder="Details…"></textarea></div>
+      <div class="form-row-2">
+        <div class="mf"><label>Due Date</label><input type="date" id="rem-date"></div>
+        <div class="mf"><label>Due Time</label><input type="time" id="rem-time"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="mf"><label>Priority</label>
+          <select id="rem-prio"><option value="critical">🔴 Critical</option><option value="high">🟠 High</option>
+            <option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select>
+        </div>
+        <div class="mf"><label>Recurring</label>
+          <select id="rem-recur"><option value="none">None</option><option value="daily">Daily</option>
+            <option value="weekly">Weekly</option><option value="monthly">Monthly</option></select>
+        </div>
+      </div>
+      <div class="mf"><label>Tags (comma-separated)</label><input type="text" id="rem-tags" placeholder="e.g. biology, chapter5"></div>
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" onclick="closeModal('reminderModal')">Cancel</button><button class="btn-primary" onclick="saveReminder()">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- Deck Modal -->
+<div class="modal-overlay hidden" id="deckModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="deckModalTitle">New Deck</h3><button class="m-close" onclick="closeModal('deckModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div class="mf"><label>Deck Name *</label><input type="text" id="dk-name" placeholder="e.g. Biology Ch.5"></div>
+        <div class="mf"><label>Subject</label><input type="text" id="dk-subject" placeholder="e.g. Science"></div>
+      </div>
+      <div class="mf"><label>Description</label><textarea id="dk-desc" rows="2" placeholder="What's in this deck?"></textarea></div>
+      <div class="mf"><label>Color</label>
+        <div class="color-row" id="deckColorPicker">
+          <div class="c-dot sel" data-c="#7c3aed" style="background:#7c3aed" onclick="pickDeckColor(this)"></div>
+          <div class="c-dot" data-c="#3b82f6" style="background:#3b82f6" onclick="pickDeckColor(this)"></div>
+          <div class="c-dot" data-c="#10b981" style="background:#10b981" onclick="pickDeckColor(this)"></div>
+          <div class="c-dot" data-c="#f59e0b" style="background:#f59e0b" onclick="pickDeckColor(this)"></div>
+          <div class="c-dot" data-c="#ef4444" style="background:#ef4444" onclick="pickDeckColor(this)"></div>
+          <div class="c-dot" data-c="#ec4899" style="background:#ec4899" onclick="pickDeckColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" onclick="closeModal('deckModal')">Cancel</button><button class="btn-primary" onclick="saveDeck()">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- Card Modal -->
+<div class="modal-overlay hidden" id="cardModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="cardModalTitle">Add Flashcard</h3><button class="m-close" onclick="closeModal('cardModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="mf"><label>Front (Question) *</label><textarea id="cd-front" rows="3" placeholder="What is …?"></textarea></div>
+      <div class="mf"><label>Back (Answer) *</label><textarea id="cd-back" rows="3" placeholder="Answer…"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" onclick="closeModal('cardModal')">Cancel</button><button class="btn-primary" onclick="saveCard()">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- Note Modal -->
+<div class="modal-overlay hidden" id="noteModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="noteModalTitle">New Note</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-ghost btn-sm" onclick="togglePreview()">👁 Preview</button>
+        <button class="m-close" onclick="closeModal('noteModal')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div class="mf"><label>Title *</label><input type="text" id="nt-title" placeholder="Note title"></div>
+        <div class="mf"><label>Subject</label><input type="text" id="nt-subject" placeholder="e.g. Biology"></div>
+      </div>
+      <div class="mf"><label>Tags</label><input type="text" id="nt-tags" placeholder="tag1, tag2"></div>
+      <div class="note-editor-wrap">
+        <textarea id="nt-content" class="note-editor" rows="14"
+          placeholder="Write notes here. Supports: **bold**, *italic*, # Heading, - list, `code`"
+          oninput="livePreview()"></textarea>
+        <div id="notePreviewPane" class="note-preview hidden"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" onclick="closeModal('noteModal')">Cancel</button><button class="btn-primary" onclick="saveNote()">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- Deck View Modal -->
+<div class="modal-overlay hidden" id="deckViewModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div><h3 id="dvTitle">Deck</h3><div id="dvSub" style="font-size:0.8rem;color:var(--tm)"></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary btn-sm" onclick="startStudy()">▶ Study</button>
+        <button class="btn-secondary btn-sm" onclick="openCardModal(null)">＋ Card</button>
+        <button class="m-close" onclick="closeModal('deckViewModal')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body"><div id="deckCardsGrid" class="cards-grid"></div></div>
+  </div>
+</div>
+
+<!-- Study Session Modal -->
+<div class="modal-overlay hidden" id="studyModal">
+  <div class="modal modal-study">
+    <div class="study-progress-bar"><div id="studyBar" style="width:0%"></div></div>
+    <div class="study-head">
+      <div id="studyDeckName"></div>
+      <div id="studyCounter" style="color:var(--tm);font-size:0.85rem"></div>
+      <button class="btn-ghost btn-sm" onclick="endStudy()">✕ End Session</button>
+    </div>
+    <div class="fc-wrap" id="fcWrap" onclick="flipCard()">
+      <div class="fc" id="fc">
+        <div class="fc-front" id="fcFront"></div>
+        <div class="fc-back" id="fcBack"></div>
+      </div>
+    </div>
+    <div class="study-hint" id="studyHint">Click card to reveal answer</div>
+    <div class="rating-row hidden" id="ratingRow">
+      <button class="r-btn r-again" onclick="rateCard(1)">😕 Again</button>
+      <button class="r-btn r-hard" onclick="rateCard(3)">🤔 Hard</button>
+      <button class="r-btn r-good" onclick="rateCard(4)">😊 Good</button>
+      <button class="r-btn r-easy" onclick="rateCard(5)">🎉 Easy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal-overlay hidden" id="confirmDlg">
+  <div class="modal modal-sm">
+    <div class="modal-body" style="text-align:center;padding:32px 24px">
+      <div style="font-size:48px;margin-bottom:12px" id="cfmIcon">⚠️</div>
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:8px" id="cfmTitle"></div>
+      <div style="color:var(--tm);font-size:0.88rem;margin-bottom:24px" id="cfmMsg"></div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="btn-ghost" onclick="closeModal('confirmDlg')">Cancel</button>
+        <button class="btn-danger" id="cfmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toasts"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
