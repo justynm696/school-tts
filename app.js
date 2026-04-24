@@ -122,14 +122,6 @@ function renderIdleState() {
                 </button>
             </div>
 
-            <div class="idle-section-label">🏢 Office Accounts</div>
-            <div class="idle-chips">
-                <button class="idle-chip idle-chip-office" data-query="registrar">📋 Registrar</button>
-                <button class="idle-chip idle-chip-office" data-query="canteen">🍽️ Canteen</button>
-                <button class="idle-chip idle-chip-office" data-query="it support">💻 IT Support</button>
-                <button class="idle-chip idle-chip-office" data-query="accounting">💰 Accounting</button>
-            </div>
-
             <div class="idle-section-label">🏗️ Browse by Floor</div>
             <div class="idle-chips">
                 <button class="idle-chip idle-chip-floor" data-query="1st floor">1️⃣ 1st Floor</button>
@@ -150,7 +142,7 @@ function renderIdleState() {
 
             <div class="idle-hint">
                 <span class="idle-hint-icon">💡</span>
-                Try: <em>"Registrar"</em>, <em>"1st Floor"</em>, <em>"Canteen"</em>, or speak into the mic 🎙️
+                Try: <em>"1st Floor"</em>, <em>"Library"</em>, <em>"Auditorium"</em>, or speak into the mic 🎙️
             </div>
         </div>
     `;
