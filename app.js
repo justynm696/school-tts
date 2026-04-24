@@ -122,13 +122,6 @@ function renderIdleState() {
                 </button>
             </div>
 
-            <div class="idle-section-label">🏗️ Browse by Floor</div>
-            <div class="idle-chips">
-                <button class="idle-chip idle-chip-floor" data-query="1st floor">1️⃣ 1st Floor</button>
-                <button class="idle-chip idle-chip-floor" data-query="2nd floor">2️⃣ 2nd Floor</button>
-                <button class="idle-chip idle-chip-floor" data-query="3rd floor">3️⃣ 3rd Floor</button>
-                <button class="idle-chip idle-chip-floor" data-query="4th floor">4️⃣ 4th Floor</button>
-            </div>
 
             <div class="idle-section-label">Quick searches</div>
             <div class="idle-chips">
@@ -168,51 +161,51 @@ function renderIdleState() {
 // ==================== Category Match Detection ====================
 // Maps search queries to exact category keys
 const CATEGORY_MAP = {
-    'events':           'events',
-    'event':            'events',
-    'history':          'history',
-    'histories':        'history',
-    'school history':   'history',
-    'campus history':   'history',
-    'facilities':       'facilities',
-    'facility':         'facilities',
-    'campus guide':     'campus_guide',
-    'guide':            'campus_guide',
-    'campus_guide':     'campus_guide',
+    'events': 'events',
+    'event': 'events',
+    'history': 'history',
+    'histories': 'history',
+    'school history': 'history',
+    'campus history': 'history',
+    'facilities': 'facilities',
+    'facility': 'facilities',
+    'campus guide': 'campus_guide',
+    'guide': 'campus_guide',
+    'campus_guide': 'campus_guide',
 };
 
 // ── Office / Floor keyword shortcuts (search-to-reveal) ──────────
 // Maps a typed/spoken phrase to a specific campus_guide item ID
 const ITEM_SHORTCUT_MAP = {
     // Office accounts
-    'registrar':            'office-registrar',
-    'registrar office':     'office-registrar',
-    'canteen':              'office-canteen',
-    'cafeteria':            'office-canteen',
-    'food':                 'office-canteen',
-    'it support':           'office-it-support',
-    'it':                   'office-it-support',
-    'tech support':         'office-it-support',
-    'technical support':    'office-it-support',
-    'accounting':           'office-accounting',
-    'finance':              'office-accounting',
-    'finance office':       'office-accounting',
-    'accounting office':    'office-accounting',
-    'payment':              'office-accounting',
-    'tuition':              'office-accounting',
+    'registrar': 'office-registrar',
+    'registrar office': 'office-registrar',
+    'canteen': 'office-canteen',
+    'cafeteria': 'office-canteen',
+    'food': 'office-canteen',
+    'it support': 'office-it-support',
+    'it': 'office-it-support',
+    'tech support': 'office-it-support',
+    'technical support': 'office-it-support',
+    'accounting': 'office-accounting',
+    'finance': 'office-accounting',
+    'finance office': 'office-accounting',
+    'accounting office': 'office-accounting',
+    'payment': 'office-accounting',
+    'tuition': 'office-accounting',
     // Floor directories
-    '1st floor':            'floor-1st',
-    'first floor':          'floor-1st',
-    'ground floor':         'floor-1st',
-    '2nd floor':            'floor-2nd',
-    'second floor':         'floor-2nd',
-    '3rd floor':            'floor-3rd',
-    'third floor':          'floor-3rd',
-    '4th floor':            'floor-4th',
-    'fourth floor':         'floor-4th',
+    '1st floor': 'floor-1st',
+    'first floor': 'floor-1st',
+    'ground floor': 'floor-1st',
+    '2nd floor': 'floor-2nd',
+    'second floor': 'floor-2nd',
+    '3rd floor': 'floor-3rd',
+    'third floor': 'floor-3rd',
+    '4th floor': 'floor-4th',
+    'fourth floor': 'floor-4th',
 };
 
-const INTERACTIVE_MAPS_QUERIES = ['interactive maps','interactive map','maps','map','navigation','navigate','floor map','floor plan'];
+const INTERACTIVE_MAPS_QUERIES = ['interactive maps', 'interactive map', 'maps', 'map', 'navigation', 'navigate', 'floor map', 'floor plan'];
 
 function detectCategoryQuery(query) {
     const q = query.trim().toLowerCase();
@@ -223,7 +216,7 @@ function detectCategoryQuery(query) {
 }
 
 function setActiveTab(categoryKey) {
-    const tabMap = { events:'events', history:'history', facilities:'facilities', campus_guide:'campus_guide' };
+    const tabMap = { events: 'events', history: 'history', facilities: 'facilities', campus_guide: 'campus_guide' };
     document.querySelectorAll('.tab-btn[data-category]').forEach(t => t.classList.remove('active'));
     const target = document.querySelector(`.tab-btn[data-category="${tabMap[categoryKey]}"]`);
     if (target) target.classList.add('active');
@@ -454,11 +447,11 @@ function renderSingleItem(itemId) {
 
     // Build icon labels for the category
     const isOffice = foundItem.category === 'Office Account';
-    const isFloor  = ['1st Floor','2nd Floor','3rd Floor','4th Floor'].includes(foundItem.category);
+    const isFloor = ['1st Floor', '2nd Floor', '3rd Floor', '4th Floor'].includes(foundItem.category);
     const bannerIcon = isOffice ? '🏢' : (isFloor ? '🏗️' : '📄');
     const bannerLabel = isOffice ? `<strong>Office Account</strong> &mdash; ${foundItem.title}` :
-                         isFloor ? `<strong>Floor Directory</strong> &mdash; ${foundItem.title}` :
-                                   `<strong>${foundItem.title}</strong>`;
+        isFloor ? `<strong>Floor Directory</strong> &mdash; ${foundItem.title}` :
+            `<strong>${foundItem.title}</strong>`;
 
     const banner = document.createElement('div');
     banner.className = 'search-results-banner category-full-banner';
@@ -475,9 +468,9 @@ function renderFullCategory(categoryKey) {
         events: 'Events', history: 'History',
         facilities: 'Facilities', campus_guide: 'Campus Guide'
     };
-    const categoryIcons = { events:'📅', history:'🏛️', facilities:'🏢', campus_guide:'🗺️' };
+    const categoryIcons = { events: '📅', history: '🏛️', facilities: '🏢', campus_guide: '🗺️' };
     const label = categoryLabels[categoryKey] || categoryKey;
-    const icon  = categoryIcons[categoryKey] || '📄';
+    const icon = categoryIcons[categoryKey] || '📄';
     const items = (viRAData[categoryKey] || []).map(item => ({ ...item, sourceCategory: categoryKey }));
 
     // Category header banner
@@ -825,12 +818,12 @@ function playText() {
         // Log TTS usage to Supabase
         if (window.ViraDB && currentTitle) {
             const duration = Math.round((Date.now() - _ttsStartTime) / 1000);
-            const voiceEl  = elements.voiceSelector;
+            const voiceEl = elements.voiceSelector;
             const voiceName = voices[voiceEl?.value]?.name || null;
-            const rate      = parseFloat(elements.speedSlider?.value || '1.0');
+            const rate = parseFloat(elements.speedSlider?.value || '1.0');
             // Derive content type from active tab
             const activeTab = document.querySelector('.tab-btn.active[data-category]');
-            const contentType = activeTab ? activeTab.dataset.category.replace('campus_guide','campus_guide') : 'event';
+            const contentType = activeTab ? activeTab.dataset.category.replace('campus_guide', 'campus_guide') : 'event';
             ViraDB.logTTS(contentType, 'tts-' + Date.now(), voiceName, rate, duration);
         }
     };
