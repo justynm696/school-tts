@@ -450,10 +450,24 @@
     <!-- Bootstrap: pre-load Supabase data so adminData is live on start -->
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
-        await ViraDB.load();
-        // Sync ViraDB cache into localStorage so admin.js loadData() picks it up
-        const cache = ViraDB.getAll();
-        localStorage.setItem('vira_data', JSON.stringify(cache));
+        try {
+          await ViraDB.load();
+          // Merge ViraDB cache into localStorage — only fill missing sections
+          // so that locally added/edited items are never overwritten.
+          const cache = ViraDB.getAll();
+          const localRaw = localStorage.getItem('vira_data');
+          const local = localRaw ? JSON.parse(localRaw) : {};
+          let changed = false;
+          ['events','history','facilities','campus_guide'].forEach(sec => {
+            if (cache[sec] && cache[sec].length && (!local[sec] || !local[sec].length)) {
+              local[sec] = cache[sec];
+              changed = true;
+            }
+          });
+          if (changed) localStorage.setItem('vira_data', JSON.stringify(local));
+        } catch(e) {
+          console.warn('[ViraDB] Bootstrap sync failed (offline?):', e);
+        }
       });
     </script>
 </body>

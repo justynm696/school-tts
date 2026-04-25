@@ -564,6 +564,344 @@ searchRoom = function () {
 // Initialize listen buttons on page load
 setTimeout(addListenButtons, 500);
 
+// ==================== You Are Here — Location & Direction System ====================
+
+// Approximate pin positions (as % of image width/height) for known rooms per floor
+// These are reference coords; the pin drops at 50% x (center) by default if not found
+const ROOM_POSITIONS = {
+    1: {
+        'Lobby': { x: 50, y: 20 },
+        'Registrar Office': { x: 30, y: 35 },
+        'Finance Office': { x: 45, y: 35 },
+        'CESO Office': { x: 60, y: 35 },
+        'Faculty Lounge': { x: 75, y: 45 },
+        'Tourism Lab': { x: 25, y: 55 },
+        'OSSAA Office': { x: 40, y: 55 },
+        'Academics Research Office': { x: 55, y: 55 },
+        'Asset Management Office': { x: 70, y: 55 },
+        'Guidance Office': { x: 30, y: 65 },
+        'Clinic': { x: 50, y: 65 },
+        'HRS Office': { x: 70, y: 65 },
+        'Canteen': { x: 50, y: 80 },
+        'Kitchen Lab': { x: 65, y: 80 },
+        'Function Room': { x: 80, y: 80 },
+        'Chemistry Lab': { x: 25, y: 80 },
+        'Basement': { x: 50, y: 92 }
+    },
+    2: {
+        'School Library & Information Center': { x: 35, y: 30 },
+        'Room 201 - Moot Court': { x: 55, y: 30 },
+        'Room 202': { x: 25, y: 50 },
+        'Room 203': { x: 35, y: 50 },
+        'Room 204': { x: 45, y: 50 },
+        'Room 205': { x: 55, y: 50 },
+        'Room 206': { x: 65, y: 50 },
+        'Room 208 - Speech Lab': { x: 75, y: 50 },
+        'Room 209 - Computer Lab': { x: 40, y: 70 },
+        'Room 210': { x: 55, y: 70 },
+        'Room 211 - Crime Lab': { x: 65, y: 70 },
+        'Room 212 - Physics Lab': { x: 75, y: 70 }
+    },
+    3: {
+        'Skills Lab': { x: 30, y: 30 },
+        'Room 301': { x: 25, y: 50 },
+        'Room 302': { x: 35, y: 50 },
+        'Room 303': { x: 45, y: 50 },
+        'Room 304': { x: 55, y: 50 },
+        'Room 305': { x: 65, y: 50 },
+        'Room 306': { x: 75, y: 50 },
+        'Room 307': { x: 30, y: 70 },
+        'Room 310': { x: 45, y: 70 },
+        'Room 311': { x: 55, y: 70 },
+        'Room 312': { x: 65, y: 70 },
+        'Room 313': { x: 75, y: 70 },
+        'Room 314': { x: 30, y: 85 },
+        'Room 315': { x: 50, y: 85 },
+        'Room 316': { x: 70, y: 85 }
+    },
+    4: {
+        'MOLA Auditorium': { x: 40, y: 30 },
+        'Room 404 - Plotting Room': { x: 30, y: 55 },
+        'Room 405': { x: 45, y: 55 },
+        'Room 406 - Mock Bridge': { x: 60, y: 55 },
+        'Room 408': { x: 30, y: 70 },
+        'Room 409': { x: 45, y: 70 },
+        'Room 410': { x: 60, y: 70 },
+        'Room 411': { x: 35, y: 82 },
+        'Room 412 - GMDSS Room': { x: 55, y: 82 },
+        'Engineering Simulator': { x: 70, y: 70 },
+        'Bridge Simulator': { x: 75, y: 55 }
+    }
+};
+
+// My location state
+let myLocation = null;   // { floor: 1, room: 'Canteen' }
+let locModalFloor = 1;
+let locModalSelectedRoom = null;
+
+// ── Location Modal ──────────────────────────────────────────
+function openLocationModal() {
+    locModalFloor = myLocation ? myLocation.floor : 1;
+    locModalSelectedRoom = myLocation ? myLocation.room : null;
+    renderLocFloorBtns();
+    renderLocRoomList();
+    document.getElementById('locRoomSearch').value = '';
+    const clearBtn = document.getElementById('locClearBtn');
+    if (clearBtn) clearBtn.style.display = myLocation ? 'inline-block' : 'none';
+    document.getElementById('locModalOverlay').classList.add('active');
+}
+
+function closeLocationModal() {
+    document.getElementById('locModalOverlay').classList.remove('active');
+}
+
+function selectLocFloor(floor) {
+    locModalFloor = floor;
+    locModalSelectedRoom = null;
+    document.getElementById('locRoomSearch').value = '';
+    renderLocFloorBtns();
+    renderLocRoomList();
+}
+
+function renderLocFloorBtns() {
+    document.querySelectorAll('#locFloorSelect .loc-floor-btn').forEach(btn => {
+        btn.classList.toggle('selected', parseInt(btn.dataset.floor) === locModalFloor);
+    });
+}
+
+function filterLocRooms() {
+    renderLocRoomList(document.getElementById('locRoomSearch').value);
+}
+
+function renderLocRoomList(filter = '') {
+    const container = document.getElementById('locRoomList');
+    const rooms = floorData[locModalFloor] || [];
+    const filtered = filter
+        ? rooms.filter(r => r.room.toLowerCase().includes(filter.toLowerCase()))
+        : rooms;
+
+    container.innerHTML = filtered.map(r => `
+        <div class="loc-room-opt ${locModalSelectedRoom === r.room ? 'selected' : ''}"
+             onclick="selectLocRoom('${r.room.replace(/'/g, "\\'")}')">
+            ${r.room}
+        </div>
+    `).join('');
+}
+
+function selectLocRoom(roomName) {
+    locModalSelectedRoom = roomName;
+    renderLocRoomList(document.getElementById('locRoomSearch').value);
+}
+
+function confirmLocation() {
+    if (!locModalSelectedRoom) {
+        const rooms = floorData[locModalFloor];
+        if (rooms && rooms.length) locModalSelectedRoom = rooms[0].room;
+    }
+    myLocation = { floor: locModalFloor, room: locModalSelectedRoom };
+    closeLocationModal();
+    updateLocationBar();
+    placeYouAreHerePin();
+    updateDirectionPanelIfActive();
+}
+
+function clearMyLocation() {
+    myLocation = null;
+    closeLocationModal();
+    updateLocationBar();
+    removeAllPins('you-are-here-pin');
+    document.getElementById('directionPanel').classList.remove('active');
+}
+
+function updateLocationBar() {
+    const bar = document.getElementById('setLocationBar');
+    const title = document.getElementById('slbTitle');
+    const sub = document.getElementById('slbSub');
+    const btn = document.getElementById('slbBtn');
+
+    if (myLocation) {
+        bar.classList.add('has-location');
+        title.textContent = `📍 You are at: ${myLocation.room}`;
+        sub.textContent = `${getOrdinal(myLocation.floor)} Floor — Tap to change your location`;
+        btn.textContent = '✏️ Change';
+        btn.className = 'slb-btn';
+    } else {
+        bar.classList.remove('has-location');
+        title.textContent = 'Set Your Location';
+        sub.textContent = 'Tap to mark where you are on the map for guided directions';
+        btn.textContent = '📍 Set Location';
+        btn.className = 'slb-btn';
+    }
+}
+
+// ── Pin Rendering ───────────────────────────────────────────
+function buildPinHTML(label, isDestination = false) {
+    const cls = isDestination ? 'you-are-here-pin destination-pin' : 'you-are-here-pin';
+    return `
+    <div class="${cls}">
+        <div class="pin-marker"><div class="pin-marker-inner"></div></div>
+        <div class="pin-label">${label}</div>
+    </div>`;
+}
+
+function placePin(floor, room, isDestination = false) {
+    const wrapperId = `mapWrapper${floor}`;
+    const wrapper = document.getElementById(wrapperId);
+    const img = document.getElementById(`mapImg${floor}`);
+    if (!wrapper || !img) return;
+
+    // Remove existing pins of same type
+    const cls = isDestination ? 'destination-pin' : 'you-are-here-pin:not(.destination-pin)';
+    wrapper.querySelectorAll(isDestination ? '.destination-pin' : '.you-are-here-pin:not(.destination-pin)').forEach(p => p.remove());
+
+    const pos = (ROOM_POSITIONS[floor] && ROOM_POSITIONS[floor][room])
+        ? ROOM_POSITIONS[floor][room]
+        : { x: 50, y: 50 };
+
+    const label = isDestination ? `📍 ${room}` : '📍 You Are Here';
+    const pin = document.createElement('div');
+    pin.className = isDestination ? 'you-are-here-pin destination-pin' : 'you-are-here-pin';
+    pin.innerHTML = `<div class="pin-marker"><div class="pin-marker-inner"></div></div><div class="pin-label">${label}</div>`;
+    pin.style.left = pos.x + '%';
+    pin.style.top = pos.y + '%';
+    wrapper.appendChild(pin);
+}
+
+function placeYouAreHerePin() {
+    if (!myLocation) return;
+    showFloor(myLocation.floor);
+    placePin(myLocation.floor, myLocation.room, false);
+}
+
+function removeAllPins(className) {
+    document.querySelectorAll('.' + className).forEach(p => p.remove());
+}
+
+// ── Direction Generation ────────────────────────────────────
+function generateDirections(fromFloor, fromRoom, toFloor, toRoom) {
+    const steps = [];
+
+    if (fromFloor === toFloor) {
+        steps.push(`You are currently at <strong>${fromRoom}</strong> on the <strong>${getOrdinal(fromFloor)} Floor</strong>.`);
+        steps.push(`Head to <strong>${toRoom}</strong> — it is on the same floor as you.`);
+        steps.push(`Look for the room signs along the corridor. You should arrive shortly.`);
+    } else {
+        steps.push(`Start at <strong>${fromRoom}</strong> on the <strong>${getOrdinal(fromFloor)} Floor</strong>.`);
+
+        if (toFloor > fromFloor) {
+            steps.push(`Head to the <strong>staircase or elevator</strong> and go <strong>UP</strong> ${toFloor - fromFloor} floor${toFloor - fromFloor > 1 ? 's' : ''}.`);
+        } else {
+            steps.push(`Head to the <strong>staircase or elevator</strong> and go <strong>DOWN</strong> ${fromFloor - toFloor} floor${fromFloor - toFloor > 1 ? 's' : ''}.`);
+        }
+
+        steps.push(`You will arrive at the <strong>${getOrdinal(toFloor)} Floor</strong>.`);
+        steps.push(`Follow the corridor signs to find <strong>${toRoom}</strong>.`);
+    }
+
+    steps.push(`🎉 You have arrived at <strong>${toRoom}</strong>!`);
+    return steps;
+}
+
+function showDirectionPanel(toFloor, toRoom) {
+    const panel = document.getElementById('directionPanel');
+    const titleEl = document.getElementById('dirTitle');
+    const subtitleEl = document.getElementById('dirSubtitle');
+    const stepsEl = document.getElementById('directionSteps');
+
+    titleEl.textContent = `Directions to ${toRoom}`;
+
+    if (myLocation) {
+        subtitleEl.innerHTML = `From <strong>${myLocation.room}</strong> (${getOrdinal(myLocation.floor)} Floor)
+            <span class="dir-floor-badge">${getOrdinal(toFloor)} Floor</span>`;
+        const steps = generateDirections(myLocation.floor, myLocation.room, toFloor, toRoom);
+        stepsEl.innerHTML = steps.map((s, i) => `
+            <div class="dir-step">
+                <div class="dir-step-num">${i + 1}</div>
+                <div class="dir-step-text">${s}</div>
+            </div>
+        `).join('');
+    } else {
+        subtitleEl.innerHTML = `<strong>${toRoom}</strong> is on the <span class="dir-floor-badge">${getOrdinal(toFloor)} Floor</span>
+            — <a href="javascript:openLocationModal()" style="color:#10b981;font-weight:600">Set your location</a> for step-by-step directions`;
+        stepsEl.innerHTML = `
+            <div class="dir-step">
+                <div class="dir-step-num">ℹ️</div>
+                <div class="dir-step-text"><strong>${toRoom}</strong> is located on the <strong>${getOrdinal(toFloor)} Floor</strong>. ${floorData[toFloor].find(r=>r.room===toRoom)?.description || ''}</div>
+            </div>
+            <div class="dir-step">
+                <div class="dir-step-num">📍</div>
+                <div class="dir-step-text">Tap <strong>"Set Location"</strong> above to get personalised step-by-step directions from your current position.</div>
+            </div>`;
+    }
+
+    panel.classList.add('active');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function updateDirectionPanelIfActive() {
+    // If the direction panel is open, refresh it with current "my location"
+    const panel = document.getElementById('directionPanel');
+    if (panel && panel.classList.contains('active')) {
+        const titleEl = document.getElementById('dirTitle');
+        const titleText = titleEl ? titleEl.textContent : '';
+        // Identify destination from title "Directions to <room>"
+        const match = titleText.match(/^Directions to (.+)$/);
+        if (match) {
+            const destRoom = match[1];
+            for (let f = 1; f <= 4; f++) {
+                const found = floorData[f].find(r => r.room === destRoom);
+                if (found) { showDirectionPanel(f, destRoom); break; }
+            }
+        }
+    }
+}
+
+// ── Override quickFind and searchRoom to show directions + pins ──
+const _origQuickFind = quickFind;
+quickFind = function(query) {
+    _origQuickFind(query);
+    // Find where this room is and show directions
+    setTimeout(() => {
+        for (let f = 1; f <= 4; f++) {
+            const found = floorData[f].find(r =>
+                r.room.toLowerCase().includes(query.toLowerCase()) ||
+                r.description.toLowerCase().includes(query.toLowerCase())
+            );
+            if (found) {
+                showDirectionPanel(f, found.room);
+                placePin(f, found.room, true); // destination pin
+                if (myLocation) placeYouAreHerePin();
+                break;
+            }
+        }
+    }, 150);
+};
+
+// Override searchRoom to add direction & destination pin on first result
+const _origSearchRoomDir = searchRoom;
+searchRoom = function() {
+    _origSearchRoomDir();
+    setTimeout(() => {
+        const query = document.getElementById('roomSearch').value.trim().toLowerCase();
+        if (!query) {
+            document.getElementById('directionPanel').classList.remove('active');
+            return;
+        }
+        for (let f = 1; f <= 4; f++) {
+            const found = floorData[f].find(r =>
+                r.room.toLowerCase().includes(query) ||
+                r.description.toLowerCase().includes(query)
+            );
+            if (found) {
+                showDirectionPanel(f, found.room);
+                placePin(f, found.room, true);
+                if (myLocation) placeYouAreHerePin();
+                break;
+            }
+        }
+    }, 150);
+};
+
 // ==================== Service Worker Registration ====================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

@@ -726,6 +726,361 @@
             outline: none;
         }
 
+        /* ── You Are Here Pin & Direction Panel ────────────────── */
+        .floor-map-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .you-are-here-pin {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -100%);
+            pointer-events: none;
+            z-index: 10;
+            animation: pinDrop 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes pinDrop {
+            0%   { opacity: 0; transform: translate(-50%, -200%); }
+            60%  { transform: translate(-50%, -90%); }
+            80%  { transform: translate(-50%, -110%); }
+            100% { opacity: 1; transform: translate(-50%, -100%); }
+        }
+
+        .pin-marker {
+            width: 36px;
+            height: 36px;
+            border-radius: 50% 50% 50% 0;
+            background: linear-gradient(135deg, #10b981, #059669);
+            transform: rotate(-45deg);
+            box-shadow: 0 4px 14px rgba(16,185,129,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pinPulse 2s ease-in-out infinite;
+        }
+
+        .pin-marker::before {
+            content: '';
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(16,185,129,0.25);
+            animation: pinRipple 2s ease-out infinite;
+        }
+
+        .pin-marker-inner {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            transform: rotate(45deg);
+        }
+
+        .pin-label {
+            margin-top: 6px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pinPulse {
+            0%, 100% { transform: rotate(-45deg) scale(1); }
+            50%       { transform: rotate(-45deg) scale(1.1); }
+        }
+
+        @keyframes pinRipple {
+            0%   { opacity: 0.7; transform: rotate(45deg) scale(0.5); }
+            100% { opacity: 0; transform: rotate(45deg) scale(2); }
+        }
+
+        /* ── Destination Pin (red) ── */
+        .destination-pin .pin-marker {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 14px rgba(239,68,68,0.5);
+            animation: none;
+        }
+        .destination-pin .pin-marker::before {
+            background: rgba(239,68,68,0.25);
+            animation: destRipple 2s ease-out infinite;
+        }
+        .destination-pin .pin-label {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+        }
+
+        @keyframes destRipple {
+            0%   { opacity: 0.7; transform: rotate(45deg) scale(0.5); }
+            100% { opacity: 0; transform: rotate(45deg) scale(2); }
+        }
+
+        /* ── Set Location Bar ── */
+        .set-location-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border: 2px dashed var(--color-border);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .set-location-bar:hover {
+            border-color: #10b981;
+            background: rgba(16,185,129,0.05);
+        }
+
+        .set-location-bar.has-location {
+            border-style: solid;
+            border-color: #10b981;
+            background: rgba(16,185,129,0.08);
+        }
+
+        .slb-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .slb-text {
+            flex: 1;
+        }
+
+        .slb-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+        }
+
+        .slb-sub {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
+        .slb-btn {
+            padding: 0.5rem 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .slb-btn:hover { background: #059669; }
+        .slb-btn.clear { background: #ef4444; }
+        .slb-btn.clear:hover { background: #dc2626; }
+
+        /* ── Direction Panel ── */
+        .direction-panel {
+            display: none;
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid #10b981;
+            animation: slideIn 0.3s ease;
+        }
+
+        .direction-panel.active { display: block; }
+
+        .direction-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .dir-icon {
+            font-size: 2rem;
+        }
+
+        .dir-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .dir-subtitle {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        .direction-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .dir-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .dir-step:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dir-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .dir-step-text {
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+            line-height: 1.5;
+        }
+
+        .dir-step-text strong {
+            color: var(--color-primary);
+        }
+
+        .dir-floor-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        /* ── Location Selection Modal ── */
+        .loc-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .loc-modal-overlay.active { display: flex; }
+        .loc-modal {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow-xl);
+            animation: slideIn 0.3s ease;
+        }
+        .loc-modal h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-primary);
+        }
+        .loc-modal p {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+        }
+        .loc-floor-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .loc-floor-btn {
+            padding: 1rem;
+            background: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--color-text-primary);
+        }
+        .loc-floor-btn:hover, .loc-floor-btn.selected {
+            border-color: #10b981;
+            background: rgba(16,185,129,0.1);
+            color: #10b981;
+        }
+        .loc-room-search {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            background: var(--color-background);
+            color: var(--color-text-primary);
+            margin-bottom: 0.75rem;
+        }
+        .loc-room-search:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        .loc-room-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+        .loc-room-opt {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            transition: background 0.2s;
+        }
+        .loc-room-opt:last-child { border-bottom: none; }
+        .loc-room-opt:hover, .loc-room-opt.selected { background: rgba(16,185,129,0.12); color: #10b981; font-weight: 600; }
+        .loc-modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .loc-modal-actions button {
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .loc-cancel-btn { background: var(--color-border); color: var(--color-text-primary); }
+        .loc-confirm-btn { background: #10b981; color: white; }
+        .loc-confirm-btn:hover { background: #059669; }
+
         /* Floating Action Button */
         .fab {
             position: fixed;
@@ -923,6 +1278,28 @@
                 </div>
             </div>
 
+            <!-- You Are Here - Set Location Bar -->
+            <div class="set-location-bar" id="setLocationBar" onclick="openLocationModal()">
+                <span class="slb-icon">📍</span>
+                <div class="slb-text">
+                    <div class="slb-title" id="slbTitle">Set Your Location</div>
+                    <div class="slb-sub" id="slbSub">Tap to mark where you are on the map for guided directions</div>
+                </div>
+                <button class="slb-btn" id="slbBtn" onclick="event.stopPropagation(); openLocationModal()">📍 Set Location</button>
+            </div>
+
+            <!-- Direction Panel -->
+            <div class="direction-panel" id="directionPanel">
+                <div class="direction-panel-header">
+                    <span class="dir-icon">🧭</span>
+                    <div>
+                        <div class="dir-title" id="dirTitle">Getting there...</div>
+                        <div class="dir-subtitle" id="dirSubtitle">From your current location</div>
+                    </div>
+                </div>
+                <div class="direction-steps" id="directionSteps"></div>
+            </div>
+
             <!-- Floor Selector -->
             <div class="floor-selector">
                 <button class="floor-btn active" onclick="showFloor(1)">1st Floor</button>
@@ -933,26 +1310,35 @@
 
             <!-- Floor Maps -->
             <div id="floor1" class="floor-map active">
-                <h3>1st Floor - Main Entrance & Administrative Offices</h3>
-                <img src="floor_1st.jpg" alt="1st Floor Map" class="map-image" onclick="openModal(this.src)">
+                <h3>1st Floor - Main Entrance &amp; Administrative Offices</h3>
+                <div class="floor-map-wrapper" id="mapWrapper1">
+                    <img src="floor_1st.jpg" alt="1st Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg1">
+                    <!-- Pins injected by JS -->
+                </div>
                 <div class="room-list" id="floor1Rooms"></div>
             </div>
 
             <div id="floor2" class="floor-map">
-                <h3>2nd Floor - Library & Computer Facilities</h3>
-                <img src="floor_2nd.jpg" alt="2nd Floor Map" class="map-image" onclick="openModal(this.src)">
+                <h3>2nd Floor - Library &amp; Computer Facilities</h3>
+                <div class="floor-map-wrapper" id="mapWrapper2">
+                    <img src="floor_2nd.jpg" alt="2nd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg2">
+                </div>
                 <div class="room-list" id="floor2Rooms"></div>
             </div>
 
             <div id="floor3" class="floor-map">
-                <h3>3rd Floor - Skills Lab & Classrooms</h3>
-                <img src="floor_3rd.jpg" alt="3rd Floor Map" class="map-image" onclick="openModal(this.src)">
+                <h3>3rd Floor - Skills Lab &amp; Classrooms</h3>
+                <div class="floor-map-wrapper" id="mapWrapper3">
+                    <img src="floor_3rd.jpg" alt="3rd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg3">
+                </div>
                 <div class="room-list" id="floor3Rooms"></div>
             </div>
 
             <div id="floor4" class="floor-map">
-                <h3>4th Floor - Auditorium & Engineering Facilities</h3>
-                <img src="floor_4th.jpg" alt="4th Floor Map" class="map-image" onclick="openModal(this.src)">
+                <h3>4th Floor - Auditorium &amp; Engineering Facilities</h3>
+                <div class="floor-map-wrapper" id="mapWrapper4">
+                    <img src="floor_4th.jpg" alt="4th Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg4">
+                </div>
                 <div class="room-list" id="floor4Rooms"></div>
             </div>
         </main>
@@ -962,6 +1348,28 @@
     <div id="imageModal" class="modal" onclick="closeModal()">
         <button class="modal-close" onclick="closeModal()">×</button>
         <img id="modalImage" src="" alt="Floor Map">
+    </div>
+
+    <!-- Location Selection Modal -->
+    <div class="loc-modal-overlay" id="locModalOverlay">
+        <div class="loc-modal">
+            <h3>📍 Where Are You?</h3>
+            <p>Select your current floor and room so V.I.R.A. can give you accurate directions.</p>
+            <div class="loc-floor-select" id="locFloorSelect">
+                <button class="loc-floor-btn selected" data-floor="1" onclick="selectLocFloor(1)">🏢 1st Floor</button>
+                <button class="loc-floor-btn" data-floor="2" onclick="selectLocFloor(2)">🏢 2nd Floor</button>
+                <button class="loc-floor-btn" data-floor="3" onclick="selectLocFloor(3)">🏢 3rd Floor</button>
+                <button class="loc-floor-btn" data-floor="4" onclick="selectLocFloor(4)">🏢 4th Floor</button>
+            </div>
+            <input type="text" class="loc-room-search" id="locRoomSearch"
+                placeholder="Search room on selected floor..." oninput="filterLocRooms()">
+            <div class="loc-room-list" id="locRoomList"></div>
+            <div class="loc-modal-actions">
+                <button class="loc-cancel-btn" onclick="closeLocationModal()">Cancel</button>
+                <button class="loc-confirm-btn" onclick="clearMyLocation()" id="locClearBtn" style="background:#ef4444;display:none">🗑️ Clear Location</button>
+                <button class="loc-confirm-btn" onclick="confirmLocation()" id="locConfirmBtn">✅ Confirm Location</button>
+            </div>
+        </div>
     </div>
 
     <!-- TTS Control Panel -->
