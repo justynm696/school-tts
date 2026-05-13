@@ -103,58 +103,12 @@ function renderIdleState() {
             <h2 class="idle-title">Ask V.I.R.A. anything</h2>
             <p class="idle-subtitle">Search or speak a topic to explore Celtech College</p>
 
-            <div class="idle-section-label">Browse by section</div>
-            <div class="idle-chips idle-chips-main">
-                <button class="idle-chip idle-chip-feature" data-query="events" data-category="events">
-                    <span class="chip-icon">📅</span><span>Events</span>
-                </button>
-                <button class="idle-chip idle-chip-feature" data-query="history" data-category="history">
-                    <span class="chip-icon">🏛️</span><span>History</span>
-                </button>
-                <button class="idle-chip idle-chip-feature" data-query="facilities" data-category="facilities">
-                    <span class="chip-icon">🏢</span><span>Facilities</span>
-                </button>
-                <button class="idle-chip idle-chip-feature" data-query="campus guide" data-category="campus_guide">
-                    <span class="chip-icon">🗺️</span><span>Campus Guide</span>
-                </button>
-                <button class="idle-chip idle-chip-feature idle-chip-maps" data-query="interactive maps" data-link="navigation.html">
-                    <span class="chip-icon">🧭</span><span>Interactive Maps</span>
-                </button>
-            </div>
-
-
-            <div class="idle-section-label">Quick searches</div>
-            <div class="idle-chips">
-                <button class="idle-chip" data-query="science fair">🔬 Science Fair</button>
-                <button class="idle-chip" data-query="library">📚 Library</button>
-                <button class="idle-chip" data-query="clinic">🏥 Clinic</button>
-                <button class="idle-chip" data-query="auditorium">🎭 Auditorium</button>
-                <button class="idle-chip" data-query="computer lab">💻 Computer Lab</button>
-                <button class="idle-chip" data-query="sports">⚽ Sports</button>
-            </div>
-
             <div class="idle-hint">
                 <span class="idle-hint-icon">💡</span>
                 Try: <em>"1st Floor"</em>, <em>"Library"</em>, <em>"Auditorium"</em>, or speak into the mic 🎙️
             </div>
         </div>
     `;
-
-    // Wire up quick-search chips
-    document.querySelectorAll('.idle-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            // Handle direct navigation link chips
-            if (chip.dataset.link) {
-                window.location.href = chip.dataset.link;
-                return;
-            }
-            const q = chip.dataset.query;
-            elements.searchInput.value = q;
-            searchQuery = q;
-            handleSearch();
-            elements.searchInput.focus();
-        });
-    });
 }
 
 
@@ -565,6 +519,19 @@ function createContentCard(item, index) {
         day: 'numeric'
     });
 
+    // Format event_time to 12h display
+    const fmtTime = (t) => {
+        if (!t) return '';
+        try {
+            const [h, m] = t.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${ampm}`;
+        } catch { return t; }
+    };
+    const timeTag = item.event_time
+        ? `<span class="card-date">🕐 ${fmtTime(item.event_time)}</span>`
+        : '';
+
     // Get category display name
     const categoryDisplayNames = {
         'events': 'Events',
@@ -584,6 +551,7 @@ function createContentCard(item, index) {
                 <h3 class="card-title">${item.title}${categoryBadge}</h3>
                 <div class="card-meta">
                     <span class="card-date">📅 ${formattedDate}</span>
+                    ${timeTag}
                     <span class="card-category">🏷️ ${item.category}</span>
                 </div>
             </div>
@@ -1073,15 +1041,272 @@ function attachEventListeners() {
     elements.playBtn.addEventListener('click', playText);
     elements.stopBtn.addEventListener('click', stopSpeech);
     elements.closeBtn.addEventListener('click', closeTTSPanel);
-    elements.fabBtn.addEventListener('click', () => {
-        if (currentText) {
-            openTTSPanel(currentTitle, currentText);
+    // ── V.I.R.A. JARVIS MODE ─────────────────────────────────────────
+    const viraOverlay  = document.getElementById('viraAssistantOverlay');
+    const viraCloseBtn = document.getElementById('viraCloseBtn');
+    const viraOrbWrap  = document.getElementById('viraOrbWrap');
+    const viraStatus   = document.getElementById('viraStatus');
+    const viraWave     = document.getElementById('viraWave');
+    const viraTranscript = document.getElementById('viraTranscript');
+    const viraMicBtn   = document.getElementById('viraMicBtn');
+
+    let viraRecognition = null;
+    let viraIsListening = false;
+    let viraIsOpen = false;
+
+    // ── State helpers ──────────────────────────────────────────────
+    function viraSetState(state) {
+        // state: 'idle' | 'listening' | 'speaking'
+        viraOrbWrap.classList.remove('vira-listening', 'vira-speaking');
+        viraWave.classList.remove('vira-wave-active', 'vira-wave-speaking');
+        viraStatus.classList.remove('listening', 'speaking');
+        viraMicBtn.classList.remove('listening');
+
+        if (state === 'listening') {
+            viraOrbWrap.classList.add('vira-listening');
+            viraWave.classList.add('vira-wave-active');
+            viraStatus.classList.add('listening');
+            viraMicBtn.classList.add('listening');
+            viraStatus.textContent = 'Listening…';
+            viraMicBtn.textContent = '🛑';
+        } else if (state === 'speaking') {
+            viraOrbWrap.classList.add('vira-speaking');
+            viraWave.classList.add('vira-wave-speaking');
+            viraWave.querySelectorAll('.vira-wave-bar').forEach(b => b.style.animation = 'waveAnim 0.5s ease-in-out infinite alternate');
+            viraStatus.classList.add('speaking');
+            viraStatus.textContent = 'V.I.R.A. Speaking…';
+            viraMicBtn.textContent = '🎤';
         } else {
-            // Open with default message
-            openTTSPanel(
-                'Welcome to V.I.R.A. - Virtual Interactive Resource Assistant',
-                'Hello! I am V.I.R.A., your Virtual Interactive Resource Assistant for Celtech College Olongapo. Select any announcement, event, schedule, or news item to have it read aloud to you. You can adjust the speech speed and choose different voices from the controls below. Try using voice search to find what you need!'
-            );
+            viraWave.querySelectorAll('.vira-wave-bar').forEach(b => b.style.animation = '');
+            viraStatus.textContent = 'V.I.R.A. Ready';
+            viraMicBtn.textContent = '🎤';
+        }
+    }
+
+    // ── Add transcript bubble ──────────────────────────────────────
+    function viraAddMsg(text, who) {
+        const msg = document.createElement('div');
+        msg.className = `vira-msg ${who}`;
+        msg.textContent = text;
+        viraTranscript.appendChild(msg);
+        viraTranscript.scrollTop = viraTranscript.scrollHeight;
+    }
+
+    // ── Speak a response ──────────────────────────────────────────
+    function viraSpeak(text, onDone) {
+        window.speechSynthesis.cancel();
+        viraSetState('speaking');
+        viraAddMsg(text, 'vira');
+
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.rate  = 0.95;
+        utt.pitch = 1.05;
+        // Prefer a clear English voice
+        const allVoices = window.speechSynthesis.getVoices();
+        const preferred = allVoices.find(v => /google us english|zira|david|samantha/i.test(v.name))
+                       || allVoices.find(v => v.lang.startsWith('en'));
+        if (preferred) utt.voice = preferred;
+
+        utt.onend = () => {
+            viraSetState('idle');
+            if (onDone) onDone();
+        };
+        utt.onerror = () => {
+            viraSetState('idle');
+            if (onDone) onDone();
+        };
+        window.speechSynthesis.speak(utt);
+    }
+
+    // ── Build a spoken reply from search results & AI (JARVIS MODE) ───
+    async function viraBuildReply(query) {
+        const q = query.trim().toLowerCase();
+        const apiKey = localStorage.getItem('vira_gemini_key') || 'AIzaSyBMnnFhFFYL_CuAwd-XkIXpfKtRAUJB82E';
+
+        // 1. Gather context from our local database
+        let contextItems = [];
+        const catMap = { events:'events', history:'history', facilities:'facilities', 'campus guide':'campus_guide', guide:'campus_guide' };
+        
+        if (catMap[q]) {
+            const items = (viRAData[catMap[q]] || []).slice(0, 3);
+            if (items.length) {
+                contextItems = items.map(i => `${i.title}: ${i.content.slice(0, 200)}`);
+            }
+        } else if (['map','maps','navigation','interactive maps'].includes(q)) {
+            contextItems = ['Interactive Campus Maps page shows every floor of Celtech College. You can find classrooms, offices, and labs there.'];
+        } else {
+            Object.values(viRAData).flat().forEach(item => {
+                if (item.title.toLowerCase().includes(q) ||
+                    item.content.toLowerCase().includes(q) ||
+                    item.category.toLowerCase().includes(q)) {
+                    contextItems.push(`${item.title}: ${item.content.slice(0, 200)}`);
+                }
+            });
+        }
+
+        const contextText = contextItems.slice(0, 3).join("\n");
+
+        // 2. If no API key, fallback to basic offline mode
+        if (!apiKey) {
+            if (contextItems.length > 0) {
+                return `Here is what I found: ${contextItems[0]}. To enable full Jarvis conversational mode, please add your Google Gemini API key in the admin settings.`;
+            }
+            return `I'm sorry, I couldn't find information about "${query}" right now. To make me smarter like Jarvis, please add a Gemini API key in settings.`;
+        }
+
+        // 3. Jarvis Mode AI Call (Gemini)
+        try {
+            const systemPrompt = `You are V.I.R.A. (Virtual Interactive Resource Assistant), the AI voice system for Celtech College Olongapo.
+Your persona is a mix of J.A.R.V.I.S. from Iron Man and Alexa — highly intelligent, polite, conversational, and concise.
+Always refer to yourself as V.I.R.A. if asked. Refer to the user as "sir" or "ma'am" occasionally.
+Use the following context from the college database to answer the user's query if relevant. If not relevant, answer conversationally but keep it brief.
+CRITICAL: Keep your response under 3 sentences as it will be read aloud by a Text-to-Speech engine.
+
+Context from database:
+${contextText || "No specific database matches found for this query."}`;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                    contents: [{
+                        role: 'user',
+                        parts: [{ text: query }]
+                    }],
+                    generationConfig: {
+                        maxOutputTokens: 150,
+                        temperature: 0.7
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                console.error("V.I.R.A. AI Error details:", errData);
+                throw new Error(errData.error?.message || 'Gemini API Error');
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text.trim();
+        } catch (error) {
+            console.error("V.I.R.A. AI Error:", error);
+            if (contextItems.length > 0) {
+                return `I apologize, but I am having trouble connecting to my neural network. However, I found this in our records: ${contextItems[0]}`;
+            }
+            return "I'm having trouble connecting to my neural network right now. Please check your internet connection or ensure your Gemini API key is valid.";
+        }
+    }
+
+    // ── Init voice recognition for VIRA mode ─────────────────────
+    function viraInitRecognition() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+        const rec = new SR();
+        rec.continuous = false;
+        rec.interimResults = false;
+        rec.lang = 'en-US';
+
+        rec.onstart  = () => viraSetState('listening');
+        rec.onresult = async (e) => {
+            const transcript = e.results[0][0].transcript.trim();
+            viraAddMsg(transcript, 'user');
+            viraIsListening = false;
+
+            // mirror query to main search bar too
+            elements.searchInput.value = transcript;
+            searchQuery = transcript;
+            handleSearch();
+
+            viraSetState('speaking');
+            viraStatus.textContent = 'V.I.R.A. Processing...';
+            
+            const reply = await viraBuildReply(transcript);
+            
+            // slight pause before speaking
+            setTimeout(() => viraSpeak(reply, () => {
+                // auto-listen again after reply
+                if (viraIsOpen) setTimeout(() => viraStartListen(), 600);
+            }), 300);
+        };
+        rec.onerror  = (e) => {
+            viraIsListening = false;
+            viraSetState('idle');
+            if (e.error !== 'no-speech' && e.error !== 'aborted') {
+                viraAddMsg(`Oops — ${e.error}. Tap the mic to try again.`, 'vira');
+            }
+        };
+        rec.onend    = () => { viraIsListening = false; };
+        return rec;
+    }
+
+    function viraStartListen() {
+        if (viraIsListening || !viraIsOpen) return;
+        if (!viraRecognition) viraRecognition = viraInitRecognition();
+        if (!viraRecognition) {
+            viraAddMsg('Speech recognition is not supported in this browser. Try Chrome or Edge.', 'vira');
+            return;
+        }
+        try {
+            viraRecognition.start();
+            viraIsListening = true;
+        } catch(_) {}
+    }
+
+    function viraStopListen() {
+        viraIsListening = false;
+        if (viraRecognition) { try { viraRecognition.stop(); } catch(_){} }
+        viraSetState('idle');
+    }
+
+    // ── Open / close overlay ──────────────────────────────────────
+    function openViraMode() {
+        viraIsOpen = true;
+        viraOverlay.classList.add('vira-active');
+        viraTranscript.innerHTML = '';
+        viraSetState('idle');
+        document.body.style.overflow = 'hidden';
+
+        // Greet the user
+        const hour = new Date().getHours();
+        const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+        const greeting = `${greet}. I'm V.I.R.A., your Virtual Interactive Resource Assistant at Celtech College. How may I assist you today?`;
+        setTimeout(() => viraSpeak(greeting, () => {
+            if (viraIsOpen) setTimeout(() => viraStartListen(), 500);
+        }), 400);
+    }
+
+    function closeViraMode() {
+        viraIsOpen = false;
+        viraStopListen();
+        window.speechSynthesis.cancel();
+        viraOverlay.classList.remove('vira-active');
+        document.body.style.overflow = '';
+        viraSetState('idle');
+    }
+
+    // ── Wire up buttons ───────────────────────────────────────────
+    elements.fabBtn.addEventListener('click', openViraMode);
+
+    viraCloseBtn.addEventListener('click', closeViraMode);
+
+    // Esc key closes
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && viraIsOpen) closeViraMode();
+    });
+
+    // Mic button toggles listen
+    viraMicBtn.addEventListener('click', () => {
+        if (viraIsListening) {
+            viraStopListen();
+        } else {
+            window.speechSynthesis.cancel();
+            viraSetState('idle');
+            setTimeout(() => viraStartListen(), 200);
         }
     });
 

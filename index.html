@@ -44,14 +44,14 @@
                     <h1 class="logo-text">V.I.R.A. <span class="accent">CeltechVoice</span></h1>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <a href="admin.html" title="Admin Panel" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+                    <a href="admin.html" title="Admin Panel" style="display:inline-flex;align-items:center;gap:6px;padding:6px;
                                background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
-                               border-radius:var(--radius-md);color:var(--color-text-primary);
-                               text-decoration:none;font-size:0.8rem;font-weight:600;
+                               border-radius:var(--radius-md);
+                               text-decoration:none;
                                transition:background 0.2s,border-color 0.2s;"
                         onmouseover="this.style.background='rgba(255,255,255,0.15)'"
                         onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-                        ⚙️ Admin
+                        <img src="celtech_logo.png" alt="Admin Panel" style="width:32px;height:32px;object-fit:contain;border-radius:6px;display:block;">
                     </a>
                     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,24 +117,19 @@
             <!-- Category Tabs -->
             <div class="category-tabs">
                 <button class="tab-btn active" data-category="events">
-                    <span class="tab-icon">📅</span>
                     <span class="tab-label">Events</span>
                 </button>
                 <button class="tab-btn" data-category="history">
-                    <span class="tab-icon">🏛️</span>
                     <span class="tab-label">History</span>
                 </button>
                 <button class="tab-btn" data-category="facilities">
-                    <span class="tab-icon">🏢</span>
                     <span class="tab-label">Facilities</span>
                 </button>
                 <button class="tab-btn" data-category="campus_guide">
-                    <span class="tab-icon">🗺️</span>
                     <span class="tab-label">Campus Guide</span>
                 </button>
                 <a href="navigation.html" class="tab-btn external-link"
                     style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
-                    <span class="tab-icon">🧭</span>
                     <span class="tab-label">Interactive Maps</span>
                 </a>
             </div>
@@ -230,6 +225,42 @@
             </svg>
             <span class="fab-label">V.I.R.A.</span>
         </button>
+    </div>
+
+    <!-- ====== V.I.R.A. JARVIS MODE OVERLAY ====== -->
+    <div id="viraAssistantOverlay" role="dialog" aria-modal="true" aria-label="V.I.R.A. Voice Assistant">
+        <button class="vira-close-btn" id="viraCloseBtn" aria-label="Close V.I.R.A.">✕</button>
+
+        <!-- Animated orb -->
+        <div class="vira-orb-wrap" id="viraOrbWrap">
+            <div class="vira-ring vira-ring-1"></div>
+            <div class="vira-ring vira-ring-2"></div>
+            <div class="vira-ring vira-ring-3"></div>
+            <div class="vira-orb-glow"></div>
+            <div class="vira-orb-logo">
+                <img src="vira_logo.png" alt="V.I.R.A.">
+            </div>
+        </div>
+
+        <!-- Status label -->
+        <div class="vira-status" id="viraStatus">V.I.R.A. Ready</div>
+
+        <!-- Waveform -->
+        <div class="vira-wave" id="viraWave">
+            <div class="vira-wave-bar"></div><div class="vira-wave-bar"></div>
+            <div class="vira-wave-bar"></div><div class="vira-wave-bar"></div>
+            <div class="vira-wave-bar"></div><div class="vira-wave-bar"></div>
+            <div class="vira-wave-bar"></div><div class="vira-wave-bar"></div>
+            <div class="vira-wave-bar"></div>
+        </div>
+
+        <!-- Conversation transcript -->
+        <div class="vira-transcript-wrap" id="viraTranscript"></div>
+
+        <!-- Mic trigger -->
+        <button class="vira-mic-btn" id="viraMicBtn" aria-label="Speak to V.I.R.A.">🎤</button>
+
+        <div class="vira-hint">Tap the mic and ask anything — or say "events", "library", "auditorium"…</div>
     </div>
 
     <!-- Backend: Supabase client + data layer -->

@@ -319,7 +319,7 @@ const navigationData = {
 ```sql
 -- Events Table
 CREATE TABLE events (
-    id VARCHAR(10) PRIMARY KEY,
+    id VARCHAR(30) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     event_date DATE NOT NULL,
@@ -332,7 +332,7 @@ CREATE TABLE events (
 
 -- History Table
 CREATE TABLE history (
-    id VARCHAR(10) PRIMARY KEY,
+    id VARCHAR(30) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     milestone_date DATE,
@@ -345,7 +345,7 @@ CREATE TABLE history (
 
 -- Facilities Table
 CREATE TABLE facilities (
-    id VARCHAR(10) PRIMARY KEY,
+    id VARCHAR(30) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     category VARCHAR(50),
@@ -357,7 +357,7 @@ CREATE TABLE facilities (
 
 -- Campus Guide Table
 CREATE TABLE campus_guide (
-    id VARCHAR(10) PRIMARY KEY,
+    id VARCHAR(30) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     category VARCHAR(50),

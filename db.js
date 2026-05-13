@@ -48,7 +48,13 @@ const ViraDB = (() => {
             icon:     row.icon || '📄',
             dept_id:  row.dept_id || null,
         };
-        if (section === 'events')  base.date = row.event_date;
+        if (section === 'events') {
+            base.date = row.event_date;
+            // Normalize event_time: Supabase TIME returns 'HH:MM:SS', keep only 'HH:MM'
+            if (row.event_time) {
+                base.event_time = row.event_time.substring(0, 5); // '08:00:00' → '08:00'
+            }
+        }
         if (section === 'history') base.date = row.milestone_date;
         if (section === 'facilities') {
             base.capacity        = row.capacity;
@@ -74,7 +80,10 @@ const ViraDB = (() => {
             is_active: true,
             dept_id:  item.dept_id || 'general'  // FK → departments.id
         };
-        if (section === 'events')       row.event_date      = item.date || null;
+        if (section === 'events') {
+            row.event_date = item.date || null;
+            row.event_time = item.event_time || null; // TIME column
+        }
         if (section === 'history') {
             row.milestone_date = item.date || null;
             delete row.dept_id;   // history has no dept_id column

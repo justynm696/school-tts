@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 820" width="1050" height="820">
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1050" height="820" fill="#FFFFFF"/>
+  <!-- seal placeholder -->
+  <circle cx="85" cy="68" r="52" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="3"/>
+  <circle cx="85" cy="68" r="38" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2"/>
+  <text x="85" y="64" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CENTRAL LUZON</text>
+  <text x="85" y="75" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">COLLEGE</text>
+  <text x="85" y="86" font-size="6" fill="#1E3A5F" text-anchor="middle" font-family="Arial">OF SCIENCE</text>
+  <!-- ISO text -->
+  <text x="85" y="132" font-size="9" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">ISO 9001:2015</text>
+  <text x="85" y="144" font-size="9" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CERTIFIED</text>
+  <!-- School name -->
+  <text x="525" y="48" font-size="18" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CENTRAL LUZON COLLEGE OF SCIENCE AND TECHNOLOGY, OLONGAPO CITY, INC.</text>
+  <!-- FLOOR MAP -->
+  <text x="525" y="100" font-size="42" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold" letter-spacing="8">FLOOR MAP</text>
+  <!-- SOCOTEC placeholder -->
+  <circle cx="970" cy="58" r="38" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2"/>
+  <text x="970" y="55" font-size="10" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">SOCOTEC</text>
+  <text x="970" y="68" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial">INTL CERT</text>
+  <!-- horizontal rule -->
+  <line x1="30" y1="155" x2="1020" y2="155" stroke="#1E3A5F" stroke-width="2"/>
+<rect x="30" y="165" width="990" height="605" fill="#F4F8FC" stroke="#1E3A5F" stroke-width="4"/>
+<text x="44" y="195" font-size="22" fill="#1E3A5F" font-family="Arial" font-weight="bold">3RD FLOOR</text>
+<rect x="34" y="169" width="36" height="120" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="34" y1="189.0" x2="70" y2="189.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="209.0" x2="70" y2="209.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="229.0" x2="70" y2="229.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="249.0" x2="70" y2="249.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="269.0" x2="70" y2="269.0" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="74" y="169" width="175" height="597" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="161" y="447.4" font-size="16" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">SKILLS</text>
+<text x="161" y="468.2" font-size="16" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">LAB</text>
+<rect x="249" y="479" width="767" height="80" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="269" y1="519" x2="324" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="324,514 334,519 324,524" fill="#8899AA"/>
+<line x1="359" y1="519" x2="414" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="414,514 424,519 414,524" fill="#8899AA"/>
+<line x1="449" y1="519" x2="504" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="504,514 514,519 504,524" fill="#8899AA"/>
+<line x1="539" y1="519" x2="594" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="594,514 604,519 594,524" fill="#8899AA"/>
+<line x1="629" y1="519" x2="684" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="684,514 694,519 684,524" fill="#8899AA"/>
+<line x1="719" y1="519" x2="774" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="774,514 784,519 774,524" fill="#8899AA"/>
+<line x1="809" y1="519" x2="864" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="864,514 874,519 864,524" fill="#8899AA"/>
+<line x1="899" y1="519" x2="954" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="954,514 964,519 954,524" fill="#8899AA"/>
+<line x1="694" y1="549" x2="694" y2="489" stroke="#8899AA" stroke-width="2.5"/><polygon points="689,494 694,483 699,494" fill="#8899AA"/>
+<rect x="249" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="300.0" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="300.0" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">310</text>
+<path d="M274.82142857142856,479 A25.821428571428573,25.821428571428573 0 0,1 300.6428571428571,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="352.2857142857143" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="403.2857142857143" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="403.2857142857143" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">311</text>
+<path d="M378.10714285714283,479 A25.821428571428573,25.821428571428573 0 0,1 403.9285714285714,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="455.57142857142856" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="506.57142857142856" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="506.57142857142856" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">312</text>
+<path d="M481.3928571428571,479 A25.821428571428573,25.821428571428573 0 0,1 507.21428571428567,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="558.8571428571429" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="609.8571428571429" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="609.8571428571429" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">313</text>
+<path d="M584.6785714285714,479 A25.821428571428573,25.821428571428573 0 0,1 610.5,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="662.1428571428572" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="713.1428571428572" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="713.1428571428572" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">314</text>
+<path d="M687.9642857142858,479 A25.821428571428573,25.821428571428573 0 0,1 713.7857142857143,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="765.4285714285716" y="169" width="44" height="310" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="765.4285714285716" y1="220.66666666666666" x2="809.4285714285716" y2="220.66666666666666" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="765.4285714285716" y1="272.3333333333333" x2="809.4285714285716" y2="272.3333333333333" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="765.4285714285716" y1="324.0" x2="809.4285714285716" y2="324.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="765.4285714285716" y1="375.66666666666663" x2="809.4285714285716" y2="375.66666666666663" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="765.4285714285716" y1="427.3333333333333" x2="809.4285714285716" y2="427.3333333333333" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="765.4285714285716" y="339" width="44" height="139" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="787.4285714285716" y="407.0" font-size="9" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">WR</text>
+<rect x="809.4285714285716" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="860.4285714285716" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="860.4285714285716" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">315</text>
+<path d="M835.2500000000001,479 A25.821428571428573,25.821428571428573 0 0,1 861.0714285714287,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="912.7142857142859" y="169" width="103.28571428571429" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="963.7142857142859" y="308.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="963.7142857142859" y="325.09999999999997" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">316</text>
+<path d="M938.5357142857144,479 A25.821428571428573,25.821428571428573 0 0,1 964.357142857143,453.17857142857144" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="249" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="300.0" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="300.0" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">307</text>
+<path d="M274.82142857142856,559 A25.821428571428573,25.821428571428573 0 0,0 300.6428571428571,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="352.2857142857143" y="559" width="44" height="207" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="352.2857142857143" y1="593.5" x2="396.2857142857143" y2="593.5" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="352.2857142857143" y1="628.0" x2="396.2857142857143" y2="628.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="352.2857142857143" y1="662.5" x2="396.2857142857143" y2="662.5" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="352.2857142857143" y1="697.0" x2="396.2857142857143" y2="697.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="352.2857142857143" y1="731.5" x2="396.2857142857143" y2="731.5" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="396.2857142857143" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="447.2857142857143" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="447.2857142857143" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">306</text>
+<path d="M422.10714285714283,559 A25.821428571428573,25.821428571428573 0 0,0 447.9285714285714,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="499.57142857142856" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="550.5714285714286" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="550.5714285714286" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">305</text>
+<path d="M525.3928571428571,559 A25.821428571428573,25.821428571428573 0 0,0 551.2142857142857,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="602.8571428571429" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="653.8571428571429" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="653.8571428571429" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">304</text>
+<path d="M628.6785714285714,559 A25.821428571428573,25.821428571428573 0 0,0 654.5,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="706.1428571428572" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="757.1428571428572" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="757.1428571428572" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">303</text>
+<path d="M731.9642857142858,559 A25.821428571428573,25.821428571428573 0 0,0 757.7857142857143,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="809.4285714285716" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="860.4285714285716" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="860.4285714285716" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">302</text>
+<path d="M835.2500000000001,559 A25.821428571428573,25.821428571428573 0 0,0 861.0714285714287,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="912.7142857142859" y="559" width="103.28571428571429" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="963.7142857142859" y="646.2" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="963.7142857142859" y="663.1" font-size="13" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">301</text>
+<path d="M938.5357142857144,559 A25.821428571428573,25.821428571428573 0 0,0 964.357142857143,584.8214285714286" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+
+  <!-- Footer tagline -->
+  <text x="525" y="802" font-size="20" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">We Teach. We Train. We Touch. We Transform.</text>
+  <line x1="30" y1="784" x2="1020" y2="784" stroke="#1E3A5F" stroke-width="2"/>
+</svg>

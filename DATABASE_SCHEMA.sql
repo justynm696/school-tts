@@ -137,7 +137,7 @@ INSERT INTO admin_users (username, password, name, role, icon, color, dept_id, p
 -- ============================================================================
 
 CREATE TABLE events (
-    id          VARCHAR(10)  PRIMARY KEY,
+    id          VARCHAR(30)  PRIMARY KEY,
     dept_id     VARCHAR(20)  NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
     title       VARCHAR(255) NOT NULL,
     content     TEXT         NOT NULL,
@@ -176,7 +176,7 @@ INSERT INTO events (id, dept_id, title, content, event_date, category, priority,
 -- ============================================================================
 
 CREATE TABLE history (
-    id             VARCHAR(10)  PRIMARY KEY,
+    id             VARCHAR(30)  PRIMARY KEY,
     title          VARCHAR(255) NOT NULL,
     content        TEXT         NOT NULL,
     milestone_date DATE,
@@ -212,7 +212,7 @@ INSERT INTO history (id, title, content, milestone_date, category, priority, ico
 -- ============================================================================
 
 CREATE TABLE facilities (
-    id              VARCHAR(10)  PRIMARY KEY,
+    id              VARCHAR(30)  PRIMARY KEY,
     dept_id         VARCHAR(20)  NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
     title           VARCHAR(255) NOT NULL,
     content         TEXT         NOT NULL,
@@ -251,7 +251,7 @@ INSERT INTO facilities (id, dept_id, title, content, category, priority, icon, c
 -- ============================================================================
 
 CREATE TABLE campus_guide (
-    id           VARCHAR(10)  PRIMARY KEY,
+    id           VARCHAR(30)  PRIMARY KEY,
     dept_id      VARCHAR(20)  REFERENCES departments(id) ON DELETE SET NULL,
     title        VARCHAR(255) NOT NULL,
     content      TEXT         NOT NULL,
@@ -294,8 +294,8 @@ INSERT INTO campus_guide (id, dept_id, title, content, category, priority, icon,
 CREATE TABLE navigation_data (
     id              SERIAL       PRIMARY KEY,
     floor           INT          NOT NULL,
-    campus_guide_id VARCHAR(10)  REFERENCES campus_guide(id) ON DELETE SET NULL,
-    facility_id     VARCHAR(10)  REFERENCES facilities(id)   ON DELETE SET NULL,
+    campus_guide_id VARCHAR(30)  REFERENCES campus_guide(id) ON DELETE SET NULL,
+    facility_id     VARCHAR(30)  REFERENCES facilities(id)   ON DELETE SET NULL,
     name            VARCHAR(255) NOT NULL,
     type            VARCHAR(20)  NOT NULL CHECK (type IN ('office', 'lab', 'classroom', 'facility', 'amenity')),
     description     TEXT,
@@ -371,7 +371,7 @@ CREATE TABLE content_tags (
     id           SERIAL      PRIMARY KEY,
     tag_id       INT         NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     content_type VARCHAR(20) NOT NULL CHECK (content_type IN ('event','history','facility','campus_guide')),
-    content_id   VARCHAR(10) NOT NULL,
+    content_id   VARCHAR(30) NOT NULL,
     created_at   TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE (tag_id, content_type, content_id)   -- prevent duplicate tagging
 );
@@ -498,7 +498,7 @@ CREATE TABLE tts_usage_logs (
     id               SERIAL       PRIMARY KEY,
     user_id          VARCHAR(50)  REFERENCES user_preferences(user_id) ON DELETE SET NULL,
     content_type     VARCHAR(20)  NOT NULL CHECK (content_type IN ('event', 'history', 'facility', 'campus_guide')),
-    content_id       VARCHAR(10)  NOT NULL,
+    content_id       VARCHAR(30)  NOT NULL,
     voice_id         VARCHAR(100) REFERENCES voice_settings(voice_id) ON DELETE SET NULL,
     speech_rate      NUMERIC(3,1),
     duration_seconds INT,
@@ -714,9 +714,9 @@ RETURNS TABLE (
     coordinate_x    INT,
     coordinate_y    INT,
     icon            VARCHAR(20),
-    campus_guide_id VARCHAR(10),
+    campus_guide_id VARCHAR(30),
     guide_title     VARCHAR(255),
-    facility_id     VARCHAR(10),
+    facility_id     VARCHAR(30),
     facility_title  VARCHAR(255)
 ) LANGUAGE plpgsql AS $$
 BEGIN

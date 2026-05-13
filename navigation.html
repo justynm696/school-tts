@@ -729,10 +729,17 @@
         /* ── You Are Here Pin & Direction Panel ────────────────── */
         .floor-map-wrapper {
             position: relative;
-            display: inline-block;
+            display: block;
             width: 100%;
         }
 
+        .floor-map-wrapper img.map-image {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* ── YOU ARE HERE pin (green) ── */
         .you-are-here-pin {
             position: absolute;
             display: flex;
@@ -741,88 +748,108 @@
             transform: translate(-50%, -100%);
             pointer-events: none;
             z-index: 10;
-            animation: pinDrop 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            animation: pinDrop 0.45s cubic-bezier(.36,.07,.19,.97) both;
+            filter: drop-shadow(0 6px 18px rgba(16,185,129,0.55));
         }
 
         @keyframes pinDrop {
-            0%   { opacity: 0; transform: translate(-50%, -200%); }
-            60%  { transform: translate(-50%, -90%); }
-            80%  { transform: translate(-50%, -110%); }
+            0%   { opacity: 0; transform: translate(-50%, -220%); }
+            60%  { transform: translate(-50%, -88%); }
+            80%  { transform: translate(-50%, -108%); }
             100% { opacity: 1; transform: translate(-50%, -100%); }
         }
 
-        .pin-marker {
-            width: 36px;
-            height: 36px;
+        /* teardrop body */
+        .pin-body {
+            position: relative;
+            width: 70px;
+            height: 70px;
             border-radius: 50% 50% 50% 0;
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(145deg, #12c98c, #059669);
             transform: rotate(-45deg);
-            box-shadow: 0 4px 14px rgba(16,185,129,0.5);
+            box-shadow: 0 6px 22px rgba(16,185,129,0.55);
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: pinPulse 2s ease-in-out infinite;
+            animation: pinPulse 2.2s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
-        .pin-marker::before {
+        /* ripple ring */
+        .pin-body::after {
             content: '';
             position: absolute;
-            width: 52px;
-            height: 52px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            background: rgba(16,185,129,0.25);
-            animation: pinRipple 2s ease-out infinite;
+            border: 3px solid rgba(16,185,129,0.35);
+            animation: pinRipple 2.2s ease-out infinite;
         }
 
-        .pin-marker-inner {
-            width: 14px;
-            height: 14px;
+        /* white inner circle with text */
+        .pin-circle {
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            background: white;
+            background: #fff;
             transform: rotate(45deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
         }
 
-        .pin-label {
-            margin-top: 6px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
+        .pin-circle-text {
+            font-size: 0.52rem;
+            font-weight: 900;
+            color: #059669;
+            text-align: center;
+            letter-spacing: -0.2px;
+            text-transform: uppercase;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(16,185,129,0.4);
-            letter-spacing: 0.5px;
+        }
+
+        /* shadow oval at base */
+        .pin-shadow {
+            width: 22px;
+            height: 7px;
+            background: rgba(0,0,0,0.22);
+            border-radius: 50%;
+            margin-top: -3px;
+            filter: blur(2px);
         }
 
         @keyframes pinPulse {
             0%, 100% { transform: rotate(-45deg) scale(1); }
-            50%       { transform: rotate(-45deg) scale(1.1); }
+            50%       { transform: rotate(-45deg) scale(1.07); }
         }
 
         @keyframes pinRipple {
-            0%   { opacity: 0.7; transform: rotate(45deg) scale(0.5); }
-            100% { opacity: 0; transform: rotate(45deg) scale(2); }
+            0%   { opacity: 0.6; transform: scale(0.7); }
+            100% { opacity: 0;   transform: scale(1.8); }
         }
 
         /* ── Destination Pin (red) ── */
-        .destination-pin .pin-marker {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            box-shadow: 0 4px 14px rgba(239,68,68,0.5);
+        .destination-pin {
+            filter: drop-shadow(0 6px 18px rgba(220,38,38,0.55));
+        }
+        .destination-pin .pin-body {
+            background: linear-gradient(145deg, #f87171, #dc2626);
+            box-shadow: 0 6px 22px rgba(220,38,38,0.55);
             animation: none;
         }
-        .destination-pin .pin-marker::before {
-            background: rgba(239,68,68,0.25);
-            animation: destRipple 2s ease-out infinite;
+        .destination-pin .pin-body::after {
+            border-color: rgba(220,38,38,0.35);
+            animation: destRipple 2.2s ease-out infinite;
         }
-        .destination-pin .pin-label {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+        .destination-pin .pin-circle-text {
+            color: #dc2626;
         }
 
         @keyframes destRipple {
-            0%   { opacity: 0.7; transform: rotate(45deg) scale(0.5); }
-            100% { opacity: 0; transform: rotate(45deg) scale(2); }
+            0%   { opacity: 0.6; transform: scale(0.7); }
+            100% { opacity: 0;   transform: scale(1.8); }
         }
 
         /* ── Set Location Bar ── */
@@ -1312,7 +1339,7 @@
             <div id="floor1" class="floor-map active">
                 <h3>1st Floor - Main Entrance &amp; Administrative Offices</h3>
                 <div class="floor-map-wrapper" id="mapWrapper1">
-                    <img src="floor_1st.jpg" alt="1st Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg1">
+                    <img src="floor_1st.png" alt="1st Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg1">
                     <!-- Pins injected by JS -->
                 </div>
                 <div class="room-list" id="floor1Rooms"></div>
@@ -1321,7 +1348,7 @@
             <div id="floor2" class="floor-map">
                 <h3>2nd Floor - Library &amp; Computer Facilities</h3>
                 <div class="floor-map-wrapper" id="mapWrapper2">
-                    <img src="floor_2nd.jpg" alt="2nd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg2">
+                    <img src="floor_2nd_clean.png" alt="2nd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg2">
                 </div>
                 <div class="room-list" id="floor2Rooms"></div>
             </div>
@@ -1329,7 +1356,7 @@
             <div id="floor3" class="floor-map">
                 <h3>3rd Floor - Skills Lab &amp; Classrooms</h3>
                 <div class="floor-map-wrapper" id="mapWrapper3">
-                    <img src="floor_3rd.jpg" alt="3rd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg3">
+                    <img src="floor_3rd_clean.png" alt="3rd Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg3">
                 </div>
                 <div class="room-list" id="floor3Rooms"></div>
             </div>
@@ -1337,7 +1364,7 @@
             <div id="floor4" class="floor-map">
                 <h3>4th Floor - Auditorium &amp; Engineering Facilities</h3>
                 <div class="floor-map-wrapper" id="mapWrapper4">
-                    <img src="floor_4th.jpg" alt="4th Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg4">
+                    <img src="floor_4th_clean.png" alt="4th Floor Map" class="map-image" onclick="openModal(this.src)" id="mapImg4">
                 </div>
                 <div class="room-list" id="floor4Rooms"></div>
             </div>

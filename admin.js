@@ -6,9 +6,9 @@
 'use strict';
 
 // ─── CONSTANTS ─────────────────────────────────────────────
-const LS_DATA_KEY     = 'vira_data';
+const LS_DATA_KEY = 'vira_data';
 const LS_ACCOUNTS_KEY = 'vira_accounts';
-const LS_SESSION_KEY  = 'vira_session';
+const LS_SESSION_KEY = 'vira_session';
 
 // ─── DEPARTMENT DEFINITIONS ────────────────────────────────
 const DEPARTMENTS = [
@@ -124,14 +124,14 @@ const AI_RESPONSES = {
 };
 
 // ─── STATE ─────────────────────────────────────────────────
-let adminData    = {};
-let accounts     = {};
-let currentUser  = null;
-let currentPage  = 'dashboard';
-let editTarget   = null;
-let confirmCb    = null;
+let adminData = {};
+let accounts = {};
+let currentUser = null;
+let currentPage = 'dashboard';
+let editTarget = null;
+let confirmCb = null;
 let selectedDept = null;
-let _formImages  = [];  // temp image store while a content form is open
+let _formImages = [];  // temp image store while a content form is open
 
 
 // ─── BOOT ──────────────────────────────────────────────────
@@ -267,10 +267,10 @@ function showLoginStep2() {
 
     const usernameInput = document.getElementById('loginUsername');
     const passwordInput = document.getElementById('loginPassword');
-    const loginBtn      = document.getElementById('loginBtn');
-    const errorEl       = document.getElementById('loginError');
-    const togglePw      = document.getElementById('togglePw');
-    const backBtn       = document.getElementById('loginBackBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorEl = document.getElementById('loginError');
+    const togglePw = document.getElementById('togglePw');
+    const backBtn = document.getElementById('loginBackBtn');
 
     usernameInput.value = '';
     passwordInput.value = '';
@@ -298,7 +298,7 @@ function showLoginStep2() {
     // Login action
     const doLogin = () => {
         const uname = usernameInput.value.trim();
-        const pw    = passwordInput.value;
+        const pw = passwordInput.value;
         errorEl.textContent = '';
 
         if (!uname || !pw) {
@@ -404,13 +404,13 @@ function buildSidebar() {
     const nav = document.getElementById('sidebarNav');
     const pages = currentUser.pages || [];
     const pageConfig = {
-        dashboard:    { icon: '📊', label: 'Dashboard' },
-        events:       { icon: '📅', label: 'Events',       badge: true },
-        history:      { icon: '🏛️', label: 'History',      badge: true },
-        facilities:   { icon: '🏢', label: 'Facilities',   badge: true },
+        dashboard: { icon: '📊', label: 'Dashboard' },
+        events: { icon: '📅', label: 'Events', badge: true },
+        history: { icon: '🏛️', label: 'History', badge: true },
+        facilities: { icon: '🏢', label: 'Facilities', badge: true },
         campus_guide: { icon: '🗺️', label: 'Campus Guide', badge: true },
-        accounts:     { icon: '👥', label: 'Accounts',     badge: true },
-        settings:     { icon: '⚙️', label: 'Settings' }
+        accounts: { icon: '👥', label: 'Accounts', badge: true },
+        settings: { icon: '⚙️', label: 'Settings' }
     };
 
     const allPages = ['dashboard', ...pages.filter(p => p !== 'dashboard')];
@@ -420,7 +420,7 @@ function buildSidebar() {
     overviewHtml += buildNavItem('dashboard', pageConfig.dashboard);
 
     let contentHtml = '';
-    const contentPages = ['events','history','facilities','campus_guide'];
+    const contentPages = ['events', 'history', 'facilities', 'campus_guide'];
     const userContentPages = contentPages.filter(p => pages.includes(p));
     if (userContentPages.length) {
         contentHtml = `<div class="sidebar-section-label">Content</div>`;
@@ -478,14 +478,14 @@ function loadData() {
     const saved = localStorage.getItem(LS_DATA_KEY);
     if (saved) {
         adminData = JSON.parse(saved);
-        ['events','history','facilities','campus_guide'].forEach(s => {
+        ['events', 'history', 'facilities', 'campus_guide'].forEach(s => {
             if (!adminData[s]) adminData[s] = [];
         });
     } else {
         adminData = JSON.parse(JSON.stringify(typeof schoolData !== 'undefined' ? schoolData : {
             events: [], history: [], facilities: [], campus_guide: []
         }));
-        ['events','history','facilities','campus_guide'].forEach(s => {
+        ['events', 'history', 'facilities', 'campus_guide'].forEach(s => {
             if (!adminData[s]) adminData[s] = [];
         });
     }
@@ -517,19 +517,27 @@ function goToPage(page) {
     if (navEl) navEl.classList.add('active');
 
     const titles = {
-        dashboard:    'Dashboard',
-        events:       'Events',
-        history:      'History',
-        facilities:   'Facilities',
+        dashboard: 'Dashboard',
+        events: 'Events',
+        history: 'History',
+        facilities: 'Facilities',
         campus_guide: 'Campus Guide',
-        accounts:     'Department Accounts',
-        settings:     'Settings'
+        accounts: 'Department Accounts',
+        settings: 'Settings'
     };
     document.getElementById('topbarTitle').textContent = titles[page] || page;
 
-    const contentPages = ['events','history','facilities','campus_guide'];
+    const contentPages = ['events', 'history', 'facilities', 'campus_guide'];
     const addBtn = document.getElementById('topbarAddBtn');
-    addBtn.style.display = contentPages.includes(page) ? 'inline-flex' : 'none';
+    if (contentPages.includes(page)) {
+        addBtn.style.display = 'inline-flex';
+        addBtn.textContent = '＋ Add Item';
+    } else if (page === 'accounts') {
+        addBtn.style.display = 'inline-flex';
+        addBtn.textContent = '＋ Add Account';
+    } else {
+        addBtn.style.display = 'none';
+    }
 
     const sidebar = document.getElementById('sidebar');
     if (window.innerWidth < 960) sidebar.classList.remove('open');
@@ -557,12 +565,18 @@ function setupHamburger() {
 // ─── TOPBAR ────────────────────────────────────────────────
 function setupTopbar() {
     document.getElementById('exportBtn').addEventListener('click', exportJSON);
-    document.getElementById('topbarAddBtn').addEventListener('click', () => openAddModal(currentPage));
+    document.getElementById('topbarAddBtn').addEventListener('click', () => {
+        if (currentPage === 'accounts') {
+            openAddAccountModal();
+        } else {
+            openAddModal(currentPage);
+        }
+    });
 }
 
 // ─── SEARCH ────────────────────────────────────────────────
 function setupSearches() {
-    ['events','history','facilities','campus_guide'].forEach(sec => {
+    ['events', 'history', 'facilities', 'campus_guide'].forEach(sec => {
         const el = document.getElementById('search-' + sec);
         if (el) el.addEventListener('input', () => renderSection(sec));
     });
@@ -572,7 +586,7 @@ function setupSearches() {
 
 // ─── ADD BUTTONS ───────────────────────────────────────────
 function setupAddButtons() {
-    ['events','history','facilities','campus_guide'].forEach(sec => {
+    ['events', 'history', 'facilities', 'campus_guide'].forEach(sec => {
         const id = 'add' + sec.split('_').map(capitalize).join('') + 'Btn';
         const btn = document.getElementById(id);
         if (btn) btn.addEventListener('click', () => openAddModal(sec));
@@ -583,10 +597,10 @@ function setupAddButtons() {
 
 // ─── MODAL ─────────────────────────────────────────────────
 function setupModalButtons() {
-    const overlay   = document.getElementById('modalOverlay');
-    const closeBtn  = document.getElementById('modalCloseBtn');
+    const overlay = document.getElementById('modalOverlay');
+    const closeBtn = document.getElementById('modalCloseBtn');
     const cancelBtn = document.getElementById('modalCancelBtn');
-    const saveBtn   = document.getElementById('modalSaveBtn');
+    const saveBtn = document.getElementById('modalSaveBtn');
 
     const close = () => overlay.classList.remove('open');
     closeBtn.addEventListener('click', close);
@@ -607,6 +621,12 @@ function openAddModal(section) {
 function openEditModal(section, id) {
     const item = getSection(section).find(x => x.id === id);
     if (!item) return;
+    
+    if (!isSuperAdmin() && item.dept_id !== currentUser.deptId) {
+        showToast('❌ You can only edit your own items.', 'error');
+        return;
+    }
+
     editTarget = { section, id };
     document.getElementById('modalTitle').textContent = `Edit ${sectionLabel(section)}`;
     document.getElementById('modalBody').innerHTML = buildForm(section, item);
@@ -632,7 +652,9 @@ function handleModalSave() {
     }
 
     if (id === null) {
-        formData.id = section.substring(0,3) + Date.now();
+        // Generate compact unique ID: 3-char prefix + base-36 timestamp (max 8 chars) = max 11 chars, safe for VARCHAR(30)
+        formData.id = section.substring(0, 3) + Math.floor(Date.now() / 1000).toString(36);
+        formData.dept_id = isSuperAdmin() ? (formData.dept_id || DEPARTMENTS[0].id) : currentUser.deptId; // Associate item with the department
         adminData[section].push(formData);
         showToast(`✅ New ${sectionLabel(section)} added!`, 'success');
     } else {
@@ -684,6 +706,13 @@ function closeConfirm() {
 // ─── DELETE ────────────────────────────────────────────────
 function deleteItem(section, id) {
     const item = getSection(section).find(x => x.id === id);
+    if (!item) return;
+
+    if (!isSuperAdmin() && item.dept_id !== currentUser.deptId) {
+        showToast('❌ You can only delete your own items.', 'error');
+        return;
+    }
+
     openConfirm(
         'Delete Item',
         `Delete "${item ? item.title : id}"? This cannot be undone.`,
@@ -708,7 +737,7 @@ function deleteItem(section, id) {
 
 // ─── RENDER ALL BADGES ─────────────────────────────────────
 function renderAll() {
-    ['events','history','facilities','campus_guide'].forEach(sec => {
+    ['events', 'history', 'facilities', 'campus_guide'].forEach(sec => {
         const el = document.getElementById('badge-' + sec);
         if (el) el.textContent = getSection(sec).length;
     });
@@ -718,11 +747,19 @@ function renderAll() {
 
 // ─── DASHBOARD ─────────────────────────────────────────────
 function renderDashboard() {
-    const ev  = getSection('events');
-    const hi  = getSection('history');
-    const fa  = getSection('facilities');
-    const cg  = getSection('campus_guide');
+    let ev = getSection('events');
+    let hi = getSection('history');
+    let fa = getSection('facilities');
+    let cg = getSection('campus_guide');
     const isSuperAdmin = currentUser.deptId === 'superadmin';
+
+    // Department Isolation: filter items by dept
+    if (!isSuperAdmin) {
+        ev = ev.filter(i => i.dept_id === currentUser.deptId);
+        hi = hi.filter(i => i.dept_id === currentUser.deptId);
+        fa = fa.filter(i => i.dept_id === currentUser.deptId);
+        cg = cg.filter(i => i.dept_id === currentUser.deptId);
+    }
 
     const statsGrid = document.getElementById('statsGrid');
     const stats = [];
@@ -782,16 +819,22 @@ function renderSection(section) {
 
     const searchVal = (document.getElementById('search-' + section)?.value || '').toLowerCase();
     let items = getSection(section);
+    
+    // Department Isolation: filter items
+    if (!isSuperAdmin()) {
+        items = items.filter(item => item.dept_id === currentUser.deptId);
+    }
+
     if (searchVal) {
         items = items.filter(item =>
-            (item.title  || '').toLowerCase().includes(searchVal) ||
+            (item.title || '').toLowerCase().includes(searchVal) ||
             (item.category || '').toLowerCase().includes(searchVal) ||
-            (item.content  || '').toLowerCase().includes(searchVal)
+            (item.content || '').toLowerCase().includes(searchVal)
         );
     }
 
     if (!items.length) {
-        const cols = section === 'events' ? 6 : 5;
+        const cols = section === 'events' ? 7 : 5;
         tbody.innerHTML = `<tr><td colspan="${cols}">
             <div class="empty-state">
                 <div class="empty-icon">${sectionIcon(section)}</div>
@@ -803,7 +846,7 @@ function renderSection(section) {
 
     tbody.innerHTML = items.map(item => {
         const dateCell = section === 'events'
-            ? `<td>${esc(item.date || '')}</td>` : '';
+            ? `<td>${esc(item.date || '')}</td><td>${esc(item.event_time ? formatTime(item.event_time) : (item.time ? formatTime(item.time) : '—'))}</td>` : '';
         const thumb = item.images && item.images.length
             ? `<img src="${item.images[0]}" class="item-thumb" alt="" onerror="this.style.display='none'">` : '';
         const mediaBadge = (item.images?.length || item.video)
@@ -835,11 +878,11 @@ function renderSection(section) {
 
 // ─── FORM BUILDER ──────────────────────────────────────────
 function buildForm(section, item) {
-    const v   = k => item ? esc(item[k] || '') : '';
+    const v = k => item ? esc(item[k] || '') : '';
     const sel = (k, opts) => opts.map(o =>
         `<option value="${o}" ${(item && item[k] === o) ? 'selected' : ''}>${capitalize(o)}</option>`
     ).join('');
-    const priorityOptions = ['high','medium','low'];
+    const priorityOptions = ['high', 'medium', 'low'];
 
     const commonFields = `
         <div class="form-row">
@@ -862,6 +905,13 @@ function buildForm(section, item) {
                 <select id="f-priority">${sel('priority', priorityOptions)}</select>
             </div>
         </div>
+        ${isSuperAdmin() ? `
+        <div class="form-group">
+            <label>Department (Owner)</label>
+            <select id="f-dept">
+                ${DEPARTMENTS.map(d => `<option value="${d.id}" ${(item && item.dept_id === d.id) ? 'selected' : ''}>${d.icon} ${d.name}</option>`).join('')}
+            </select>
+        </div>` : ''}
         <div class="form-group">
             <label>Content / Description</label>
             <textarea id="f-content" rows="4" placeholder="Full description…">${v('content')}</textarea>
@@ -897,11 +947,21 @@ function buildForm(section, item) {
         </div>
     `;
 
-    const dateExtra = `
+    const dateExtra = section === 'events' ? `
+        <div class="form-row">
+            <div class="form-group">
+                <label>Event Date</label>
+                <input type="date" id="f-date" value="${v('date')}">
+            </div>
+            <div class="form-group">
+                <label>Event Time</label>
+                <input type="time" id="f-time" value="${v('event_time')}" placeholder="e.g. 09:00">
+            </div>
+        </div>` : (section === 'history' ? `
         <div class="form-group">
-            <label>${section === 'events' ? 'Event Date' : 'Milestone Date'}</label>
+            <label>Milestone Date</label>
             <input type="date" id="f-date" value="${v('date')}">
-        </div>`;
+        </div>` : '');
 
     return (section === 'events' || section === 'history')
         ? commonFields + dateExtra
@@ -915,15 +975,17 @@ function readForm(section) {
         return el ? el.value.trim() : '';
     };
     const base = {
-        title:    get('f-title'),
-        icon:     get('f-icon') || '📄',
+        title: get('f-title'),
+        icon: get('f-icon') || '📄',
         category: get('f-category'),
         priority: get('f-priority') || 'medium',
-        content:  get('f-content'),
-        images:   [..._formImages],
-        video:    get('f-video') || ''
+        content: get('f-content'),
+        images: [..._formImages],
+        video: get('f-video') || ''
     };
+    if (isSuperAdmin()) base.dept_id = get('f-dept');
     if (section === 'events' || section === 'history') base.date = get('f-date');
+    if (section === 'events') base.event_time = get('f-time') || '';
     return base;
 }
 
@@ -982,7 +1044,7 @@ function removeFormImage(idx) {
 }
 
 function updateVideoPreview() {
-    const input   = document.getElementById('f-video');
+    const input = document.getElementById('f-video');
     const preview = document.getElementById('videoPreview');
     if (!input || !preview) return;
     const url = input.value.trim();
@@ -1120,7 +1182,7 @@ function buildAccountForm(acc, lockedDept = null) {
         // Sub-accounts within a dept get all dept pages except 'accounts' (no recursive account management)
         pageList = (deptDef ? deptDef.pages : []).filter(p => p !== 'accounts');
     } else {
-        pageList = ['events','history','facilities','campus_guide','settings'];
+        pageList = ['events', 'history', 'facilities', 'campus_guide', 'settings'];
     }
 
     // Department selector — locked for dept admins, full dropdown for super admin
@@ -1153,9 +1215,9 @@ function buildAccountForm(acc, lockedDept = null) {
 
     const pageChecks = pageList.map(p => `
         <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;font-weight:500;color:var(--text-primary);cursor:pointer">
-            <input type="checkbox" value="${p}" ${acc && (acc.pages||[]).includes(p) ? 'checked' : ''}
+            <input type="checkbox" value="${p}" ${acc && (acc.pages || []).includes(p) ? 'checked' : ''}
                 style="width:auto;accent-color:var(--accent)">
-            ${p.replace('_',' ')}
+            ${p.replace('_', ' ')}
         </label>
     `).join('');
 
@@ -1202,11 +1264,11 @@ function buildAccountForm(acc, lockedDept = null) {
 
 function saveAccountModal() {
     const username = document.getElementById('acc-username')?.value.trim();
-    const name     = document.getElementById('acc-name')?.value.trim();
-    const role     = document.getElementById('acc-role')?.value.trim();
-    const icon     = document.getElementById('acc-icon')?.value.trim() || '👤';
-    const pw       = document.getElementById('acc-password')?.value;
-    const confirm  = document.getElementById('acc-confirm')?.value;
+    const name = document.getElementById('acc-name')?.value.trim();
+    const role = document.getElementById('acc-role')?.value.trim();
+    const icon = document.getElementById('acc-icon')?.value.trim() || '👤';
+    const pw = document.getElementById('acc-password')?.value;
+    const confirm = document.getElementById('acc-confirm')?.value;
 
     // For dept admins, always use their own dept; for super admin, read from select
     const deptId = isSuperAdmin()
@@ -1310,7 +1372,7 @@ function deleteAccount(username) {
 // ─── AI CHAT ───────────────────────────────────────────────
 function setupAIChat() {
     const input = document.getElementById('aiChatInput');
-    const btn   = document.getElementById('aiSendBtn');
+    const btn = document.getElementById('aiSendBtn');
     if (!input || !btn) return;
 
     const send = () => {
@@ -1388,7 +1450,7 @@ function getAIResponse(input) {
         return pick(AI_RESPONSES.help);
     }
     if (lower.match(/how many|count|total/)) {
-        return `📊 Current data: <strong>${ev.length}</strong> Events, <strong>${hi.length}</strong> History entries, <strong>${fa.length}</strong> Facilities, <strong>${cg.length}</strong> Campus Guide entries. Total: <strong>${ev.length+hi.length+fa.length+cg.length}</strong> items.`;
+        return `📊 Current data: <strong>${ev.length}</strong> Events, <strong>${hi.length}</strong> History entries, <strong>${fa.length}</strong> Facilities, <strong>${cg.length}</strong> Campus Guide entries. Total: <strong>${ev.length + hi.length + fa.length + cg.length}</strong> items.`;
     }
     if (lower.match(/account|user|password|login/)) {
         return `👥 You can manage department accounts from the Accounts section in the sidebar. There are currently <strong>${Object.keys(accounts).length}</strong> accounts registered.`;
@@ -1411,6 +1473,22 @@ function setupSettings() {
     const resetBtn = document.getElementById('resetDataBtn');
     const exportBtn = document.getElementById('exportBtnSettings');
     const changePwBtn = document.getElementById('changePwBtn');
+    const saveApiBtn = document.getElementById('saveApiKeyBtn');
+    const apiInput = document.getElementById('geminiApiKey');
+
+    if (saveApiBtn && apiInput) {
+        apiInput.value = localStorage.getItem('vira_gemini_key') || '';
+        saveApiBtn.addEventListener('click', () => {
+            const val = apiInput.value.trim();
+            if (val) {
+                localStorage.setItem('vira_gemini_key', val);
+                showToast('✅ Gemini API Key saved! Jarvis mode enabled.', 'success');
+            } else {
+                localStorage.removeItem('vira_gemini_key');
+                showToast('ℹ️ Gemini API Key removed. Jarvis mode disabled.', 'info');
+            }
+        });
+    }
 
     if (resetBtn) resetBtn.addEventListener('click', () => {
         openConfirm(
@@ -1430,7 +1508,7 @@ function setupSettings() {
     if (exportBtn) exportBtn.addEventListener('click', exportJSON);
 
     if (changePwBtn) changePwBtn.addEventListener('click', () => {
-        const cur  = document.getElementById('currentPw')?.value;
+        const cur = document.getElementById('currentPw')?.value;
         const newP = document.getElementById('newPw')?.value;
         const conf = document.getElementById('confirmPw')?.value;
         const acct = accounts[currentUser.username];
@@ -1458,8 +1536,8 @@ function setupSettings() {
 // ─── EXPORT ────────────────────────────────────────────────
 function exportJSON() {
     const blob = new Blob([JSON.stringify(adminData, null, 2)], { type: 'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url;
     a.download = 'vira_data_export.json';
     a.click();
@@ -1472,7 +1550,7 @@ function showToast(msg, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+    const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
     toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
@@ -1486,15 +1564,25 @@ function showToast(msg, type = 'info') {
 // ─── HELPERS ───────────────────────────────────────────────
 function esc(str) {
     return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#39;');
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function capitalize(s) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
+function formatTime(t) {
+    if (!t) return '';
+    try {
+        const [h, m] = t.split(':').map(Number);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hour = h % 12 || 12;
+        return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
+    } catch { return t; }
 }
 
 function sectionLabel(section) {
@@ -1521,12 +1609,13 @@ class hidden {
 }
 
 // ─── GLOBAL EXPOSE ─────────────────────────────────────────
-window.goToPage             = goToPage;
-window.openEditModal        = openEditModal;
-window.deleteItem           = deleteItem;
+window.goToPage = goToPage;
+window.openEditModal = openEditModal;
+window.deleteItem = deleteItem;
 window.openEditAccountModal = openEditAccountModal;
-window.toggleAccountStatus  = toggleAccountStatus;
-window.deleteAccount        = deleteAccount;
-window.addFormImageUrl      = addFormImageUrl;
-window.removeFormImage      = removeFormImage;
-window.updateVideoPreview   = updateVideoPreview;
+window.openAddAccountModal = openAddAccountModal;
+window.toggleAccountStatus = toggleAccountStatus;
+window.deleteAccount = deleteAccount;
+window.addFormImageUrl = addFormImageUrl;
+window.removeFormImage = removeFormImage;
+window.updateVideoPreview = updateVideoPreview;

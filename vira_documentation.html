@@ -225,7 +225,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">&lt;!-- EVENTS: School events and announcements --&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;table</span> <span class="attr">name</span>=<span class="val">"events"</span> <span class="attr">engine</span>=<span class="val">"InnoDB"</span><span class="tag">&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"id"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(10)"</span> <span class="attr">key</span>=<span class="val">"PRIMARY"</span><span class="tag">/&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"id"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(30)"</span> <span class="attr">key</span>=<span class="val">"PRIMARY"</span><span class="tag">/&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"title"</span> <span class="attr">type</span>=<span class="val">"VARCHAR(255)"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"content"</span> <span class="attr">type</span>=<span class="val">"TEXT"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;field</span> <span class="attr">name</span>=<span class="val">"event_date"</span> <span class="attr">type</span>=<span class="val">"DATE"</span> <span class="attr">null</span>=<span class="val">"false"</span><span class="tag">/&gt;</span><br>
@@ -314,7 +314,7 @@
     <div class="erd-row cols-3">
       <div class="erd-entity">
         <div class="erd-entity-header">📅 EVENTS</div>
-        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(30)</span></div>
         <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
         <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
         <div class="erd-field"><span class="erd-field-name">event_date</span><span class="erd-field-type">DATE</span></div>
@@ -324,7 +324,7 @@
       </div>
       <div class="erd-entity">
         <div class="erd-entity-header">🏛️ HISTORY</div>
-        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(30)</span></div>
         <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
         <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
         <div class="erd-field"><span class="erd-field-name">milestone_date</span><span class="erd-field-type">DATE</span></div>
@@ -334,7 +334,7 @@
       </div>
       <div class="erd-entity">
         <div class="erd-entity-header">💻 FACILITIES</div>
-        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(30)</span></div>
         <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
         <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
         <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
@@ -347,7 +347,7 @@
     <div class="erd-row cols-3">
       <div class="erd-entity">
         <div class="erd-entity-header accent">🏢 CAMPUS_GUIDE</div>
-        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> id</span><span class="erd-field-type">VARCHAR(30)</span></div>
         <div class="erd-field"><span class="erd-field-name">title</span><span class="erd-field-type">VARCHAR(255)</span></div>
         <div class="erd-field"><span class="erd-field-name">content</span><span class="erd-field-type">TEXT</span></div>
         <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">VARCHAR(50)</span></div>
@@ -368,7 +368,7 @@
         <div class="erd-entity-header green">🔊 VOICE_SETTINGS</div>
         <div class="erd-field"><span class="erd-field-name"><span class="badge badge-pk">PK</span> voice_id</span><span class="erd-field-type">VARCHAR(100)</span></div>
         <div class="erd-field"><span class="erd-field-name">name</span><span class="erd-field-type">VARCHAR(255)</span></div>
-        <div class="erd-field"><span class="erd-field-name">lang</span><span class="erd-field-type">VARCHAR(10)</span></div>
+        <div class="erd-field"><span class="erd-field-name">lang</span><span class="erd-field-type">VARCHAR(30)</span></div>
         <div class="erd-field"><span class="erd-field-name">gender</span><span class="erd-field-type">ENUM</span></div>
         <div class="erd-field"><span class="erd-field-name">local_service</span><span class="erd-field-type">BOOLEAN</span></div>
         <div class="erd-field"><span class="erd-field-name">is_active</span><span class="erd-field-type">BOOLEAN</span></div>

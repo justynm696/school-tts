@@ -589,48 +589,48 @@ const ROOM_POSITIONS = {
         'Basement': { x: 50, y: 92 }
     },
     2: {
-        'School Library & Information Center': { x: 35, y: 30 },
-        'Room 201 - Moot Court': { x: 55, y: 30 },
-        'Room 202': { x: 25, y: 50 },
-        'Room 203': { x: 35, y: 50 },
-        'Room 204': { x: 45, y: 50 },
-        'Room 205': { x: 55, y: 50 },
-        'Room 206': { x: 65, y: 50 },
-        'Room 208 - Speech Lab': { x: 75, y: 50 },
-        'Room 209 - Computer Lab': { x: 40, y: 70 },
-        'Room 210': { x: 55, y: 70 },
-        'Room 211 - Crime Lab': { x: 65, y: 70 },
-        'Room 212 - Physics Lab': { x: 75, y: 70 }
+        'School Library & Information Center': { x: 15, y: 64 },
+        'Room 201 - Moot Court': { x: 91, y: 81 },
+        'Room 202': { x: 81, y: 81 },
+        'Room 203': { x: 71, y: 81 },
+        'Room 204': { x: 60, y: 81 },
+        'Room 205': { x: 50, y: 81 },
+        'Room 206': { x: 40, y: 81 },
+        'Room 208 - Speech Lab': { x: 31, y: 40 },
+        'Room 209 - Computer Lab': { x: 43, y: 40 },
+        'Room 210': { x: 55, y: 40 },
+        'Room 211 - Crime Lab': { x: 78, y: 40 },
+        'Room 212 - Physics Lab': { x: 90, y: 40 }
     },
     3: {
-        'Skills Lab': { x: 30, y: 30 },
-        'Room 301': { x: 25, y: 50 },
-        'Room 302': { x: 35, y: 50 },
-        'Room 303': { x: 45, y: 50 },
-        'Room 304': { x: 55, y: 50 },
-        'Room 305': { x: 65, y: 50 },
-        'Room 306': { x: 75, y: 50 },
-        'Room 307': { x: 30, y: 70 },
-        'Room 310': { x: 45, y: 70 },
-        'Room 311': { x: 55, y: 70 },
-        'Room 312': { x: 65, y: 70 },
-        'Room 313': { x: 75, y: 70 },
-        'Room 314': { x: 30, y: 85 },
-        'Room 315': { x: 50, y: 85 },
-        'Room 316': { x: 70, y: 85 }
+        'Skills Lab': { x: 15, y: 64 },
+        'Room 301': { x: 91, y: 81 },
+        'Room 302': { x: 82, y: 81 },
+        'Room 303': { x: 74, y: 81 },
+        'Room 304': { x: 65, y: 81 },
+        'Room 305': { x: 56, y: 81 },
+        'Room 306': { x: 47, y: 81 },
+        'Room 307': { x: 29, y: 81 },
+        'Room 310': { x: 29, y: 40 },
+        'Room 311': { x: 38, y: 40 },
+        'Room 312': { x: 47, y: 40 },
+        'Room 313': { x: 56, y: 40 },
+        'Room 314': { x: 65, y: 40 },
+        'Room 315': { x: 83, y: 40 },
+        'Room 316': { x: 91, y: 40 }
     },
     4: {
-        'MOLA Auditorium': { x: 40, y: 30 },
-        'Room 404 - Plotting Room': { x: 30, y: 55 },
-        'Room 405': { x: 45, y: 55 },
-        'Room 406 - Mock Bridge': { x: 60, y: 55 },
-        'Room 408': { x: 30, y: 70 },
-        'Room 409': { x: 45, y: 70 },
-        'Room 410': { x: 60, y: 70 },
-        'Room 411': { x: 35, y: 82 },
-        'Room 412 - GMDSS Room': { x: 55, y: 82 },
-        'Engineering Simulator': { x: 70, y: 70 },
-        'Bridge Simulator': { x: 75, y: 55 }
+        'MOLA Auditorium': { x: 15, y: 64 },
+        'Room 404 - Plotting Room': { x: 66, y: 81 },
+        'Room 405': { x: 55, y: 81 },
+        'Room 406 - Mock Bridge': { x: 43, y: 81 },
+        'Room 408': { x: 31, y: 40 },
+        'Room 409': { x: 43, y: 40 },
+        'Room 410': { x: 55, y: 40 },
+        'Room 411': { x: 78, y: 40 },
+        'Room 412 - GMDSS Room': { x: 90, y: 40 },
+        'Engineering Simulator': { x: 78, y: 81 },
+        'Bridge Simulator': { x: 90, y: 81 }
     }
 };
 
@@ -734,13 +734,25 @@ function updateLocationBar() {
     }
 }
 
-// ── Pin Rendering ───────────────────────────────────────────
-function buildPinHTML(label, isDestination = false) {
+// ── Pin Rendering ──────────────────────────────────────────
+
+/**
+ * Builds the YOU ARE HERE / destination pin HTML.
+ * @param {string} line1  - First line inside the circle (e.g. "YOU'RE" / room name, abbreviated)
+ * @param {string} line2  - Second line inside the circle (e.g. "HERE")
+ * @param {boolean} isDestination - true = red, false = green
+ */
+function buildPinHTML(line1, line2, isDestination = false) {
     const cls = isDestination ? 'you-are-here-pin destination-pin' : 'you-are-here-pin';
     return `
     <div class="${cls}">
-        <div class="pin-marker"><div class="pin-marker-inner"></div></div>
-        <div class="pin-label">${label}</div>
+        <div class="pin-body">
+            <div class="pin-circle">
+                <span class="pin-circle-text">${line1}</span>
+                <span class="pin-circle-text">${line2}</span>
+            </div>
+        </div>
+        <div class="pin-shadow"></div>
     </div>`;
 }
 
@@ -751,19 +763,40 @@ function placePin(floor, room, isDestination = false) {
     if (!wrapper || !img) return;
 
     // Remove existing pins of same type
-    const cls = isDestination ? 'destination-pin' : 'you-are-here-pin:not(.destination-pin)';
     wrapper.querySelectorAll(isDestination ? '.destination-pin' : '.you-are-here-pin:not(.destination-pin)').forEach(p => p.remove());
 
     const pos = (ROOM_POSITIONS[floor] && ROOM_POSITIONS[floor][room])
         ? ROOM_POSITIONS[floor][room]
         : { x: 50, y: 50 };
 
-    const label = isDestination ? `📍 ${room}` : '📍 You Are Here';
+    // Build abbreviated label lines
+    let line1, line2;
+    if (isDestination) {
+        // Shorten long room names to fit inside pin circle
+        const short = room.length > 12 ? room.substring(0, 12).trim() + '.' : room;
+        // Split roughly in half
+        const words = short.split(' ');
+        const mid = Math.ceil(words.length / 2);
+        line1 = words.slice(0, mid).join(' ');
+        line2 = words.slice(mid).join(' ') || '📍';
+    } else {
+        line1 = "YOU'RE";
+        line2 = 'HERE';
+    }
+
     const pin = document.createElement('div');
     pin.className = isDestination ? 'you-are-here-pin destination-pin' : 'you-are-here-pin';
-    pin.innerHTML = `<div class="pin-marker"><div class="pin-marker-inner"></div></div><div class="pin-label">${label}</div>`;
+    pin.innerHTML = `
+        <div class="pin-body">
+            <div class="pin-circle">
+                <span class="pin-circle-text">${line1}</span>
+                <span class="pin-circle-text">${line2}</span>
+            </div>
+        </div>
+        <div class="pin-shadow"></div>
+    `;
     pin.style.left = pos.x + '%';
-    pin.style.top = pos.y + '%';
+    pin.style.top  = pos.y + '%';
     wrapper.appendChild(pin);
 }
 

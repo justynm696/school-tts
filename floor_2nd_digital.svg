@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 820" width="1050" height="820">
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1050" height="820" fill="#FFFFFF"/>
+  <!-- seal placeholder -->
+  <circle cx="85" cy="68" r="52" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="3"/>
+  <circle cx="85" cy="68" r="38" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2"/>
+  <text x="85" y="64" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CENTRAL LUZON</text>
+  <text x="85" y="75" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">COLLEGE</text>
+  <text x="85" y="86" font-size="6" fill="#1E3A5F" text-anchor="middle" font-family="Arial">OF SCIENCE</text>
+  <!-- ISO text -->
+  <text x="85" y="132" font-size="9" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">ISO 9001:2015</text>
+  <text x="85" y="144" font-size="9" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CERTIFIED</text>
+  <!-- School name -->
+  <text x="525" y="48" font-size="18" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CENTRAL LUZON COLLEGE OF SCIENCE AND TECHNOLOGY, OLONGAPO CITY, INC.</text>
+  <!-- FLOOR MAP -->
+  <text x="525" y="100" font-size="42" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold" letter-spacing="8">FLOOR MAP</text>
+  <!-- SOCOTEC placeholder -->
+  <circle cx="970" cy="58" r="38" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2"/>
+  <text x="970" y="55" font-size="10" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">SOCOTEC</text>
+  <text x="970" y="68" font-size="8" fill="#1E3A5F" text-anchor="middle" font-family="Arial">INTL CERT</text>
+  <!-- horizontal rule -->
+  <line x1="30" y1="155" x2="1020" y2="155" stroke="#1E3A5F" stroke-width="2"/>
+<rect x="30" y="165" width="990" height="605" fill="#F4F8FC" stroke="#1E3A5F" stroke-width="4"/>
+<text x="44" y="195" font-size="22" fill="#1E3A5F" font-family="Arial" font-weight="bold">2ND FLOOR</text>
+<rect x="34" y="169" width="36" height="120" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="34" y1="189.0" x2="70" y2="189.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="209.0" x2="70" y2="209.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="229.0" x2="70" y2="229.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="249.0" x2="70" y2="249.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="34" y1="269.0" x2="70" y2="269.0" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="74" y="169" width="210" height="597" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="179" y="421.8" font-size="14" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">SCHOOL</text>
+<text x="179" y="440.0" font-size="14" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">LIBRARY &</text>
+<text x="179" y="458.2" font-size="14" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">INFORMATION</text>
+<text x="179" y="476.4" font-size="14" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CENTER</text>
+<rect x="284" y="479" width="732" height="80" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="304" y1="519" x2="359" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="359,514 369,519 359,524" fill="#8899AA"/>
+<line x1="394" y1="519" x2="449" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="449,514 459,519 449,524" fill="#8899AA"/>
+<line x1="484" y1="519" x2="539" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="539,514 549,519 539,524" fill="#8899AA"/>
+<line x1="574" y1="519" x2="629" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="629,514 639,519 629,524" fill="#8899AA"/>
+<line x1="664" y1="519" x2="719" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="719,514 729,519 719,524" fill="#8899AA"/>
+<line x1="754" y1="519" x2="809" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="809,514 819,519 809,524" fill="#8899AA"/>
+<line x1="844" y1="519" x2="899" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="899,514 909,519 899,524" fill="#8899AA"/>
+<line x1="934" y1="519" x2="989" y2="519" stroke="#8899AA" stroke-width="2.5"/><polygon points="989,514 999,519 989,524" fill="#8899AA"/>
+<rect x="284" y="169" width="138.0" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="353.0" y="306.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">SPEECH LAB</text>
+<text x="353.0" y="322.40000000000003" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM 208</text>
+<path d="M318.5,479 A34.5,34.5 0 0,1 353.0,444.5" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="422.0" y="169" width="138.0" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="491.0" y="299.6" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">COMPUTER</text>
+<text x="491.0" y="315.20000000000005" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">LAB</text>
+<text x="491.0" y="330.80000000000007" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM 209</text>
+<path d="M456.5,479 A34.5,34.5 0 0,1 491.0,444.5" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="560.0" y="169" width="110.4" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="615.0" y="306.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="615.0" y="322.40000000000003" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">210</text>
+<path d="M587.6,479 A27.6,27.6 0 0,1 615.2,451.4" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="670.4" y="169" width="42" height="310" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="670.4" y1="220.66666666666666" x2="712.4" y2="220.66666666666666" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="670.4" y1="272.3333333333333" x2="712.4" y2="272.3333333333333" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="670.4" y1="324.0" x2="712.4" y2="324.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="670.4" y1="375.66666666666663" x2="712.4" y2="375.66666666666663" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="670.4" y1="427.3333333333333" x2="712.4" y2="427.3333333333333" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="712.4" y="169" width="138.0" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="781.4" y="299.6" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">CRIME</text>
+<text x="781.4" y="315.20000000000005" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">LAB</text>
+<text x="781.4" y="330.80000000000007" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM 211</text>
+<path d="M746.9,479 A34.5,34.5 0 0,1 781.4,444.5" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="850.4" y="169" width="138.0" height="310" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="919.4" y="299.6" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">PHYSICS</text>
+<text x="919.4" y="315.20000000000005" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">LAB</text>
+<text x="919.4" y="330.80000000000007" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM 212</text>
+<path d="M884.9,479 A34.5,34.5 0 0,1 919.4,444.5" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="284" y="559" width="42" height="207" fill="#C8D8E8" stroke="#1E3A5F" stroke-width="2.5"/>
+<line x1="284" y1="593.5" x2="326" y2="593.5" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="284" y1="628.0" x2="326" y2="628.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="284" y1="662.5" x2="326" y2="662.5" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="284" y1="697.0" x2="326" y2="697.0" stroke="#1E3A5F" stroke-width="1"/>
+<line x1="284" y1="731.5" x2="326" y2="731.5" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="326" y="559" width="111.29032258064515" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="381.0" y="644.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="381.0" y="660.4" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">206</text>
+<path d="M353.8225806451613,559 A27.82258064516129,27.82258064516129 0 0,0 381.64516129032256,586.8225806451613" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="437.2903225806451" y="559" width="111.29032258064515" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="492.2903225806451" y="644.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="492.2903225806451" y="660.4" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">205</text>
+<path d="M465.1129032258064,559 A27.82258064516129,27.82258064516129 0 0,0 492.9354838709677,586.8225806451613" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="548.5806451612902" y="559" width="111.29032258064515" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="603.5806451612902" y="644.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="603.5806451612902" y="660.4" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">204</text>
+<path d="M576.4032258064516,559 A27.82258064516129,27.82258064516129 0 0,0 604.2258064516129,586.8225806451613" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="659.8709677419354" y="559" width="111.29032258064515" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="714.8709677419354" y="644.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="714.8709677419354" y="660.4" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">203</text>
+<path d="M687.6935483870967,559 A27.82258064516129,27.82258064516129 0 0,0 715.516129032258,586.8225806451613" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="771.1612903225805" y="559" width="111.29032258064515" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="826.1612903225805" y="644.8" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM</text>
+<text x="826.1612903225805" y="660.4" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">202</text>
+<path d="M798.9838709677418,559 A27.82258064516129,27.82258064516129 0 0,0 826.8064516129032,586.8225806451613" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+<rect x="882.4516129032256" y="559" width="133.54838709677418" height="207" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2.5"/>
+<text x="948.4516129032256" y="637.6" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">MOOT</text>
+<text x="948.4516129032256" y="653.2" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">COURT</text>
+<text x="948.4516129032256" y="668.8000000000001" font-size="12" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">RM 201</text>
+<path d="M915.8387096774192,559 A33.387096774193544,33.387096774193544 0 0,0 949.2258064516127,592.3870967741935" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+
+  <!-- Footer tagline -->
+  <text x="525" y="802" font-size="20" fill="#1E3A5F" text-anchor="middle" font-family="Arial" font-weight="bold">We Teach. We Train. We Touch. We Transform.</text>
+  <line x1="30" y1="784" x2="1020" y2="784" stroke="#1E3A5F" stroke-width="2"/>
+</svg>
